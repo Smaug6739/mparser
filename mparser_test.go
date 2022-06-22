@@ -5,6 +5,6 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	Parse(`# Hello world
-# Header 2`)
+	Parse(`####### Hello world
+## Header 2`)
 }
