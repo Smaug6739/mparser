@@ -17,7 +17,7 @@ type Data struct {
 	lineContent    string
 }
 
-func getInfos(state preprocessor.Markdown) (*Data, error) {
+func getInfos(state *preprocessor.Markdown) (*Data, error) {
 	lastTokenIndex := len(state.Tokens) - 1
 	lastToken := state.Tokens[lastTokenIndex]
 	lineIndex := lastToken.Line + 1

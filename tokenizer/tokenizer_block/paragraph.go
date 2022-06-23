@@ -1,48 +1,45 @@
 package tokenizer_block
 
 import (
-	"strings"
-
 	"github.com/Smaug6739/mparser/preprocessor"
+	"strings"
 )
 
 // TODO: Return bool
 func tokenizeBlockParagraph(state *preprocessor.Markdown) {
-	lastTokenIndex := len(state.Tokens) - 1
-	lastToken := state.Tokens[lastTokenIndex]
-	lineNumber := lastToken.Line + 1
-	if lineNumber > state.MaxIndex {
+	data, err := getInfos(state)
+	if err != nil {
 		return
 	}
-	line := strings.Trim(state.Lines[lineNumber], " ")
+	data.lineContent = strings.Trim(data.lineContent, " ")
 
 	tokenStart := preprocessor.Token{
 		Token: "paragraph_start",
 		Html:  "<p>",
-		Line:  lineNumber,
+		Line:  data.lineIndex,
 		Block: true,
 	}
 	tokenInline := preprocessor.Token{
 		Token:   "inline",
-		Content: line,
-		Line:    lineNumber,
+		Content: data.lineContent,
+		Line:    data.lineIndex,
 		Block:   false,
 	}
 	tokenClose := preprocessor.Token{
 		Token: "paragraph_close",
 		Html:  "</p>",
-		Line:  lineNumber,
+		Line:  data.lineIndex,
 		Block: true,
 	}
 	//OPTIMIZATION: Repetition of len(line)
-	if lastToken.Token == "paragraph_close" && len(line) > 0 {
-		state.Tokens[lastTokenIndex] = tokenInline
+	if data.lastToken.Token == "paragraph_close" && len(data.lineContent) > 0 {
+		state.Tokens[data.lastTokenIndex] = tokenInline
 		state.Tokens = append(state.Tokens, tokenClose)
-	} else if len(line) > 0 {
+	} else if len(data.lineContent) > 0 {
 		state.Tokens = append(state.Tokens, tokenStart)
 		state.Tokens = append(state.Tokens, tokenInline)
 		state.Tokens = append(state.Tokens, tokenClose)
 	} else {
-		state.Tokens = append(state.Tokens, preprocessor.Token{Token: "empty", Line: lineNumber})
+		state.Tokens = append(state.Tokens, preprocessor.Token{Token: "empty", Line: data.lineIndex})
 	}
 }

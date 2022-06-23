@@ -8,14 +8,15 @@ import (
 )
 
 func tokenizeBlockHeader(state *preprocessor.Markdown) bool {
-	lastToken := state.Tokens[len(state.Tokens)-1]
-	lineNumber := lastToken.Line + 1
 
-	line := state.Lines[lineNumber]
+	data, err := getInfos(state)
+	if err != nil {
+		return false
+	}
 
 	// If the string start by more than 3 spaces, returns
-	leftTrimmed := strings.TrimLeft(line, " ")
-	leadingSpaces := countLeadingSpaces(line, leftTrimmed)
+	leftTrimmed := strings.TrimLeft(data.lineContent, " ")
+	leadingSpaces := countLeadingSpaces(data.lineContent, leftTrimmed)
 
 	if leadingSpaces >= 4 {
 		return false
@@ -23,11 +24,11 @@ func tokenizeBlockHeader(state *preprocessor.Markdown) bool {
 	for level := 6; level >= 1; level-- {
 		prefix := strings.Repeat(" ", leadingSpaces) + strings.Repeat("#", level) // The markdown prefix
 
-		if strings.HasPrefix(line, prefix) {
-			content := line[len(prefix):] // The content based on prefix length
-			if strings.HasPrefix(line, prefix+" ") {
-				prefix += " "                // Increase the prefix with white space
-				content = line[len(prefix):] // Update the content based on prefix
+		if strings.HasPrefix(data.lineContent, prefix) {
+			content := data.lineContent[len(prefix):] // The content based on prefix length
+			if strings.HasPrefix(data.lineContent, prefix+" ") {
+				prefix += " "                            // Increase the prefix with white space
+				content = data.lineContent[len(prefix):] // Update the content based on prefix
 			} else if content != "" {
 				return false // If there has no space *and* the content is not empty, returns
 			}
@@ -36,19 +37,19 @@ func tokenizeBlockHeader(state *preprocessor.Markdown) bool {
 				Token:    "header_start",
 				Html:     `<h` + strconv.Itoa(level) + `>`,
 				Markdown: prefix,
-				Line:     lineNumber,
+				Line:     data.lineIndex,
 				Block:    true,
 			})
 			state.Tokens = append(state.Tokens, preprocessor.Token{
 				Token:   "inline",
-				Content: strings.Trim(line[len(prefix):], " "),
-				Line:    lineNumber,
+				Content: strings.Trim(data.lineContent[len(prefix):], " "),
+				Line:    data.lineIndex,
 				Block:   false,
 			})
 			state.Tokens = append(state.Tokens, preprocessor.Token{
 				Token: "header_end",
 				Html:  `</h` + strconv.Itoa(level) + `>`,
-				Line:  lineNumber,
+				Line:  data.lineIndex,
 				Block: true,
 			})
 			return true
