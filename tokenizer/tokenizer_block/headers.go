@@ -10,18 +10,19 @@ import (
 func countLeadingSpaces(str1, trimmedStr string) int {
 	return len(str1) - len(trimmedStr)
 }
-func tokenizeBlockHeader(state *preprocessor.Markdown) {
+func tokenizeBlockHeader(state *preprocessor.Markdown) bool {
+
 	lastToken := state.Tokens[len(state.Tokens)-1]
 	lineNumber := lastToken.Line + 1
+
 	line := state.Lines[lineNumber]
 
 	// If the string start by more than 3 spaces, returns
 	leftTrimmed := strings.TrimLeft(line, " ")
 	leadingSpaces := countLeadingSpaces(line, leftTrimmed)
 	if leadingSpaces >= 4 {
-		return
+		return false
 	}
-
 	for level := 6; level >= 1; level-- {
 		prefix := strings.Repeat(" ", leadingSpaces) + strings.Repeat("#", level) // The markdown prefix
 
@@ -31,7 +32,7 @@ func tokenizeBlockHeader(state *preprocessor.Markdown) {
 				prefix += " "                // Increase the prefix with white space
 				content = line[len(prefix):] // Update the content based on prefix
 			} else if content != "" {
-				return // If there has no space *and* the content is not empty, returns
+				return false // If there has no space *and* the content is not empty, returns
 			}
 
 			state.Tokens = append(state.Tokens, preprocessor.Token{
@@ -53,7 +54,8 @@ func tokenizeBlockHeader(state *preprocessor.Markdown) {
 				Line:  lineNumber,
 				Block: true,
 			})
-
+			return true
 		}
 	}
+	return false
 }
