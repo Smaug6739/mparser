@@ -7,9 +7,6 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
-func countLeadingSpaces(str1, trimmedStr string) int {
-	return len(str1) - len(trimmedStr)
-}
 func tokenizeBlockHeader(state *preprocessor.Markdown) bool {
 
 	lastToken := state.Tokens[len(state.Tokens)-1]
