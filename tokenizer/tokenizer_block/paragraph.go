@@ -11,7 +11,9 @@ func tokenizeBlockParagraph(state *preprocessor.Markdown) {
 	lastTokenIndex := len(state.Tokens) - 1
 	lastToken := state.Tokens[lastTokenIndex]
 	lineNumber := lastToken.Line + 1
-
+	if lineNumber > state.MaxIndex {
+		return
+	}
 	line := strings.Trim(state.Lines[lineNumber], " ")
 
 	tokenStart := preprocessor.Token{

@@ -8,7 +8,6 @@ import (
 )
 
 func tokenizeBlockHeader(state *preprocessor.Markdown) bool {
-
 	lastToken := state.Tokens[len(state.Tokens)-1]
 	lineNumber := lastToken.Line + 1
 
@@ -17,6 +16,7 @@ func tokenizeBlockHeader(state *preprocessor.Markdown) bool {
 	// If the string start by more than 3 spaces, returns
 	leftTrimmed := strings.TrimLeft(line, " ")
 	leadingSpaces := countLeadingSpaces(line, leftTrimmed)
+
 	if leadingSpaces >= 4 {
 		return false
 	}

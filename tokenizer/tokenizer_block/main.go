@@ -6,7 +6,7 @@ import (
 )
 
 func New(state *preprocessor.Markdown) {
-	for state.Tokens[len(state.Tokens)-1].Line < state.TotalIndexes {
+	for state.Tokens[len(state.Tokens)-1].Line < state.MaxIndex {
 		logger.New().Warn("Loop tokenizer main")
 		tokenizeBlockHeader(state)
 		tokenizeBlockParagraph(state)
