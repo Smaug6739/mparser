@@ -1,10 +1,10 @@
 package tokenizer_block
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
+	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
@@ -19,17 +19,18 @@ func tokenizeBlockHeader(state *preprocessor.Markdown) {
 
 	// If the string start by more than 3 spaces, returns
 	leftTrimmed := strings.TrimLeft(line, " ")
-	if countLeadingSpaces(line, leftTrimmed) >= 4 {
+	leadingSpaces := countLeadingSpaces(line, leftTrimmed)
+	if leadingSpaces >= 4 {
 		return
 	}
 
-	if !strings.HasPrefix(leftTrimmed, "#") {
-		fmt.Println("No header prefix")
-		return
-	}
 	for level := 6; level >= 1; level-- {
-		prefix := strings.Repeat("#", level) + " "
+		prefix := strings.Repeat(" ", leadingSpaces) + strings.Repeat("#", level) + " "
+		log := logger.New()
 		if strings.HasPrefix(line, prefix) {
+
+			log.Warn("---" + prefix + "---")
+			log.Warn(strconv.Itoa(len(prefix)))
 			state.Tokens = append(state.Tokens, preprocessor.Token{
 				Token:    "header_start",
 				Html:     `<h` + strconv.Itoa(level) + `>`,
@@ -39,7 +40,7 @@ func tokenizeBlockHeader(state *preprocessor.Markdown) {
 			})
 			state.Tokens = append(state.Tokens, preprocessor.Token{
 				Token:   "inline",
-				Content: leftTrimmed[len(prefix):],
+				Content: line[len(prefix):],
 				Line:    lineNumber,
 				Block:   false,
 			})
