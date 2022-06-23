@@ -6,9 +6,11 @@ import (
 
 func prepar(str string) *Markdown {
 	// The main Markdown instance
+	lines := strings.Split(str, "\n")
 	var instance Markdown = Markdown{
-		Source: str,
-		Lines:  strings.Split(str, "\n"),
+		Source:     str,
+		Lines:      lines,
+		TotalLines: len(lines),
 		Tokens: Tokens{
 			Token{
 				Token:    "",
