@@ -1,6 +1,8 @@
 package preprocessor
 
-import "regexp"
+import (
+	"regexp"
+)
 
 var NEWLINES = "\r\n?|\n"
 var NULL = `\0`
