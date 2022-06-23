@@ -17,9 +17,9 @@ const (
 
 type LoggerInterface interface {
 	Details(any)
-	Info(string)
-	Warn(string)
-	Error(string)
+	Info(any)
+	Warn(any)
+	Error(any)
 }
 
 type Logger struct {
@@ -33,15 +33,15 @@ func (l *Logger) Details(display any) {
 	l.details.Println(displayJson(display))
 }
 
-func (l *Logger) Info(str string) {
+func (l *Logger) Info(str any) {
 	l.info.Println(str)
 }
 
-func (l *Logger) Warn(str string) {
+func (l *Logger) Warn(str any) {
 	l.warn.Println(str)
 }
 
-func (l *Logger) Error(str string) {
+func (l *Logger) Error(str any) {
 	l.error.Println(str)
 }
 

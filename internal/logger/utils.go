@@ -1,9 +1,18 @@
 package logger
 
-import "encoding/json"
+import (
+	"bytes"
+	"encoding/json"
+)
 
 func displayJson(str any) string {
-	r, err := json.MarshalIndent(str, "", "  ")
+
+	buffer := &bytes.Buffer{}
+	encoder := json.NewEncoder(buffer)
+	encoder.SetEscapeHTML(false)
+	encoder.SetIndent("", "  ")
+	err := encoder.Encode(str)
+	r := buffer.Bytes()
 	if err != nil {
 		return "ERROR DURING PARSING"
 	}
