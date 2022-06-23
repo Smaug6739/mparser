@@ -8,9 +8,9 @@ func prepar(str string) *Markdown {
 	// The main Markdown instance
 	lines := strings.Split(str, "\n")
 	var instance Markdown = Markdown{
-		Source:       str,
-		Lines:        lines,
-		TotalIndexes: len(lines) - 1,
+		Source:   str,
+		Lines:    lines,
+		MaxIndex: len(lines) - 1,
 		Tokens: Tokens{
 			Token{
 				Token:    "",

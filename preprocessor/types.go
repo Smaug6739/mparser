@@ -1,10 +1,10 @@
 package preprocessor
 
 type Markdown struct {
-	Source       string   // The brute string
-	Lines        []string // The source splited on character "\n"
-	TotalIndexes int      // Total of indexes
-	Tokens       Tokens   // Tokens (see: Token)
+	Source   string   // The brute string
+	Lines    []string // The source splited on character "\n"
+	MaxIndex int      // Maximal index
+	Tokens   Tokens   // Tokens (see: Token)
 }
 
 type Tokens = []Token
