@@ -34,7 +34,8 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Headers 10", "   # Header 10", [3]string{"# ", "", ""}, [3]string{"<h1>", "", "</h1>"}, [3]string{"", "Header 10", ""})
 }
 func TestTokenize(t *testing.T) {
-	input := "# Headers 1"
+	input := `# Headers 1
+  ## Header 2`
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
 }
