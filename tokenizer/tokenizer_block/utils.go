@@ -6,6 +6,8 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
+// Param one: the string
+// Param two: the left-trimmed string (strings.Trim(str, " "))
 func countLeadingSpaces(str1, trimmedStr string) int {
 	return len(str1) - len(trimmedStr)
 }
