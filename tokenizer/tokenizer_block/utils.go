@@ -11,6 +11,9 @@ import (
 func countLeadingSpaces(str1, trimmedStr string) int {
 	return len(str1) - len(trimmedStr)
 }
+func isSpaceOrTab(character rune) bool {
+	return character == 32 /* space */ || character == 9 /* tab */
+}
 
 type Data struct {
 	lastTokenIndex int
