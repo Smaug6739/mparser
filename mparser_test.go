@@ -6,7 +6,7 @@ import (
 	"github.com/Smaug6739/mparser/internal/logger"
 )
 
-func test(t *testing.T, name, input string, markdown, html, content [3]string) {
+func test(t *testing.T, name, input string, markdown, html, content []string) {
 	tokenized := Tokenize(input)
 	for index, v := range tokenized.Tokens[1:] {
 		/*if v.Markdown != markdown[index] {
@@ -21,19 +21,28 @@ func test(t *testing.T, name, input string, markdown, html, content [3]string) {
 	}
 }
 func TestTokenizeAuto(t *testing.T) {
-	test(t, "Headers 1", "# Header 1", [3]string{"# ", "", ""}, [3]string{"<h1>", "", "</h1>"}, [3]string{"", "Header 1", ""})
-	test(t, "Headers 2", "## Header 2", [3]string{"## ", "", ""}, [3]string{"<h2>", "", "</h2>"}, [3]string{"", "Header 2", ""})
-	test(t, "Headers 3", "### Header 3", [3]string{"### ", "", ""}, [3]string{"<h3>", "", "</h3>"}, [3]string{"", "Header 3", ""})
-	test(t, "Headers 4", "#### Header 4", [3]string{"#### ", "", ""}, [3]string{"<h4>", "", "</h4>"}, [3]string{"", "Header 4", ""})
-	test(t, "Headers 5", "##### Header 5", [3]string{"##### ", "", ""}, [3]string{"<h5>", "", "</h5>"}, [3]string{"", "Header 5", ""})
-	test(t, "Headers 6", "###### Header 6", [3]string{"###### ", "", ""}, [3]string{"<h6>", "", "</h6>"}, [3]string{"", "Header 6", ""})
-	test(t, "Headers 7 (empty)", "#", [3]string{"# ", "", ""}, [3]string{"<h1>", "", "</h1>"}, [3]string{"", "", ""})
-	//TODO: #Header = paragraph
-	test(t, "Headers 8", " ## Header 8", [3]string{"# ", "", ""}, [3]string{"<h2>", "", "</h2>"}, [3]string{"", "Header 8", ""})
-	test(t, "Headers 9", "  ### Header 9", [3]string{"# ", "", ""}, [3]string{"<h3>", "", "</h3>"}, [3]string{"", "Header 9", ""})
-	test(t, "Headers 10", "   # Header 10", [3]string{"# ", "", ""}, [3]string{"<h1>", "", "</h1>"}, [3]string{"", "Header 10", ""})
-	test(t, "Headers 11 (trim)", "   #         Header 11        ", [3]string{"# ", "", ""}, [3]string{"<h1>", "", "</h1>"}, [3]string{"", "Header 11", ""})
-
+	test(t, "Headers 1", "# Header 1", []string{"# ", "", ""}, []string{"<h1>", "", "</h1>"}, []string{"", "Header 1", ""})
+	test(t, "Headers 2", "## Header 2", []string{"## ", "", ""}, []string{"<h2>", "", "</h2>"}, []string{"", "Header 2", ""})
+	test(t, "Headers 3", "### Header 3", []string{"### ", "", ""}, []string{"<h3>", "", "</h3>"}, []string{"", "Header 3", ""})
+	test(t, "Headers 4", "#### Header 4", []string{"#### ", "", ""}, []string{"<h4>", "", "</h4>"}, []string{"", "Header 4", ""})
+	test(t, "Headers 5", "##### Header 5", []string{"##### ", "", ""}, []string{"<h5>", "", "</h5>"}, []string{"", "Header 5", ""})
+	test(t, "Headers 6", "###### Header 6", []string{"###### ", "", ""}, []string{"<h6>", "", "</h6>"}, []string{"", "Header 6", ""})
+	test(t, "Headers 7 (empty)", "#", []string{"# ", "", ""}, []string{"<h1>", "", "</h1>"}, []string{"", "", ""})
+	test(t, "Headers 8", " ## Header 8", []string{"# ", "", ""}, []string{"<h2>", "", "</h2>"}, []string{"", "Header 8", ""})
+	test(t, "Headers 9", "  ### Header 9", []string{"# ", "", ""}, []string{"<h3>", "", "</h3>"}, []string{"", "Header 9", ""})
+	test(t, "Headers 10", "   # Header 10", []string{"# ", "", ""}, []string{"<h1>", "", "</h1>"}, []string{"", "Header 10", ""})
+	test(t, "Headers 11 (trim)", "   #         Header 11        ", []string{"# ", "", ""}, []string{"<h1>", "", "</h1>"}, []string{"", "Header 11", ""})
+	test(t, "Headers 12 (paragraph)", "   #Header 12        ", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "#Header 12", ""})
+	// Thematic breaks
+	test(t, "Thematic breaks 1", "---", []string{"---"}, []string{"</hr>"}, []string{""})
+	test(t, "Thematic breaks 2", "___", []string{"---"}, []string{"</hr>"}, []string{""})
+	test(t, "Thematic breaks 3", "***", []string{"---"}, []string{"</hr>"}, []string{""})
+	test(t, "Thematic breaks 4", "  ***", []string{"---"}, []string{"</hr>"}, []string{""})
+	test(t, "Thematic breaks 5", "   ***", []string{"---"}, []string{"</hr>"}, []string{""})
+	test(t, "Thematic breaks 6", "   *  *     *", []string{"---"}, []string{"</hr>"}, []string{""})
+	test(t, "Thematic breaks 7", "   **   *", []string{"---"}, []string{"</hr>"}, []string{""})
+	test(t, "Thematic breaks 8", "   *  a**", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "*  a**", ""})
+	test(t, "Thematic breaks 9", "    *  **", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "*  **", ""}) //TODO: 4 spaces => remove for code block
 }
 func TestTokenize(t *testing.T) {
 	input := `# Headers 1
