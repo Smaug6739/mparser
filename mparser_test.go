@@ -27,11 +27,13 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Headers 4", "#### Header 4", [3]string{"#### ", "", ""}, [3]string{"<h4>", "", "</h4>"}, [3]string{"", "Header 4", ""})
 	test(t, "Headers 5", "##### Header 5", [3]string{"##### ", "", ""}, [3]string{"<h5>", "", "</h5>"}, [3]string{"", "Header 5", ""})
 	test(t, "Headers 6", "###### Header 6", [3]string{"###### ", "", ""}, [3]string{"<h6>", "", "</h6>"}, [3]string{"", "Header 6", ""})
-	test(t, "Headers 7", "#", [3]string{"# ", "", ""}, [3]string{"<h1>", "", "</h1>"}, [3]string{"", "", ""})
+	test(t, "Headers 7 (empty)", "#", [3]string{"# ", "", ""}, [3]string{"<h1>", "", "</h1>"}, [3]string{"", "", ""})
 	//TODO: #Header = paragraph
 	test(t, "Headers 8", " ## Header 8", [3]string{"# ", "", ""}, [3]string{"<h2>", "", "</h2>"}, [3]string{"", "Header 8", ""})
 	test(t, "Headers 9", "  ### Header 9", [3]string{"# ", "", ""}, [3]string{"<h3>", "", "</h3>"}, [3]string{"", "Header 9", ""})
 	test(t, "Headers 10", "   # Header 10", [3]string{"# ", "", ""}, [3]string{"<h1>", "", "</h1>"}, [3]string{"", "Header 10", ""})
+	test(t, "Headers 11 (trim)", "   #         Header 11        ", [3]string{"# ", "", ""}, [3]string{"<h1>", "", "</h1>"}, [3]string{"", "Header 11", ""})
+
 }
 func TestTokenize(t *testing.T) {
 	input := `# Headers 1
