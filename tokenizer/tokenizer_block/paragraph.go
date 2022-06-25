@@ -14,7 +14,7 @@ func tokenizeBlockParagraph(state *preprocessor.Markdown) {
 	data.lineContent = strings.Trim(data.lineContent, " ")
 
 	tokenStart := preprocessor.Token{
-		Token: "paragraph_start",
+		Token: "paragraph_open",
 		Html:  "<p>",
 		Line:  data.lineIndex,
 		Block: true,
@@ -32,7 +32,7 @@ func tokenizeBlockParagraph(state *preprocessor.Markdown) {
 		Block: true,
 	}
 	//OPTIMIZATION: Repetition of len(line)
-	if data.lastToken.Token == "paragraph_close" && len(data.lineContent) > 0 {
+	if data.lastToken.Token == "paragraph_close" && data.lastToken.Line == data.lineIndex-1 && len(data.lineContent) > 0 {
 		state.Tokens[data.lastTokenIndex] = tokenInline
 		state.Tokens = append(state.Tokens, tokenClose)
 	} else if len(data.lineContent) > 0 {
