@@ -44,15 +44,18 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Thematic breaks 8", "   *  a**", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "*  a**", ""})
 	test(t, "Thematic breaks 9", "    *  **", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "*  **", ""}) //TODO: 4 spaces => remove for code block
 
+	// Lheaders
+	test(t, "Line headers 1", "Header\n=", []string{"", "", "===", "==="}, []string{"<h1>", "", "</h1>", ""}, []string{"", "Header", "", "==="})
+	test(t, "Line headers 2", "Header\n---", []string{"", "", "---", "---"}, []string{"<h2>", "", "</h2>", ""}, []string{"", "Header", "", "---"})
 	// Paragraph
 	test(t, "Paragraph 1", "Text", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text", ""})
 	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})
 }
 func TestTokenize(t *testing.T) {
-	input := `# Headers 1
- Paragraph one
+	input := `Headers 1
 
-  Paragraph two`
+  On two lines
+===`
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
 }
