@@ -11,5 +11,6 @@ func New(state *preprocessor.Markdown) {
 		tokenizeBlockHeader(state)
 		tokenizeBlockThematicBreak(state)
 		tokenizeBlockParagraph(state)
+		tokenizeBlockLHeader(state)
 	}
 }
