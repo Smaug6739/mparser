@@ -2,6 +2,7 @@ package tokenizer_block
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/Smaug6739/mparser/preprocessor"
 )
@@ -14,10 +15,13 @@ func countLeadingSpaces(str1, trimmedStr string) int {
 func isSpaceOrTab(character rune) bool {
 	return character == 32 /* space */ || character == 9 /* tab */
 }
+func isEmptyLine(str string) bool {
+	return strings.Trim(str, " ") == ""
+}
 
 type Data struct {
 	lastTokenIndex int
-	lastToken      preprocessor.Token
+	lastToken      *preprocessor.Token
 	lineIndex      int
 	lineContent    string
 }
@@ -32,7 +36,7 @@ func getInfos(state *preprocessor.Markdown) (*Data, error) {
 	lineContent := state.Lines[lineIndex]
 	return &Data{
 		lastTokenIndex: lastTokenIndex,
-		lastToken:      lastToken,
+		lastToken:      &lastToken,
 		lineIndex:      lineIndex,
 		lineContent:    lineContent,
 	}, nil
