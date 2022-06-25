@@ -10,6 +10,7 @@ func New(state *preprocessor.Markdown) {
 		logger.New().Warn("Loop tokenizer main")
 		tokenizeBlockHeader(state)
 		tokenizeBlockThematicBreak(state)
+		tokenizeBlockIndentedCode(state)
 		tokenizeBlockParagraph(state)
 		tokenizeBlockLHeader(state)
 	}
