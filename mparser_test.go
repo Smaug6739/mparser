@@ -42,20 +42,23 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Thematic breaks 6", "   *  *     *", []string{"---"}, []string{"</hr>"}, []string{""})
 	test(t, "Thematic breaks 7", "   **   *", []string{"---"}, []string{"</hr>"}, []string{""})
 	test(t, "Thematic breaks 8", "   *  a**", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "*  a**", ""})
-	test(t, "Thematic breaks 9", "    *  **", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "*  **", ""}) //TODO: 4 spaces => remove for code block
+	//test(t, "Thematic breaks 9", "    *  **", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "*  **", ""}) //TODO: 4 spaces => remove for code block
 
 	// Lheaders
 	test(t, "Line headers 1", "Header\n=", []string{"", "", "===", "==="}, []string{"<h1>", "", "</h1>", ""}, []string{"", "Header", "", "==="})
 	test(t, "Line headers 2", "Header\n---", []string{"", "", "---", "---"}, []string{"<h2>", "", "</h2>", ""}, []string{"", "Header", "", "---"})
+
+	// Indented code
+	test(t, "Indented code 1", "    code", []string{"", "", "    ", "    "}, []string{"<pre>", "<code>", "", "</code>", "</pre>", ""}, []string{"", "", "    code", "", ""})
+	test(t, "Indented code 2", "    code\n    code", []string{"", "", "", "", "", ""}, []string{"<pre>", "<code>", "", "", "</code>", "</pre>"}, []string{"", "", "    code", "    code", "", ""})
+
 	// Paragraph
 	test(t, "Paragraph 1", "Text", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text", ""})
 	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})
 }
 func TestTokenize(t *testing.T) {
-	input := `Headers 1
-
-  On two lines
-===`
+	input := `    code
+    code`
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
 }
