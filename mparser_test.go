@@ -4,8 +4,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"testing"
-
-	"github.com/Smaug6739/mparser/internal/logger"
 )
 
 func test(t *testing.T, name, input string, markdown, html, content []string) {
@@ -62,18 +60,16 @@ func TestTokenizeAuto(t *testing.T) {
 func TestTokenize(t *testing.T) {
 	input := `
 - Item one
-  - Item two
-- Item three
-`
+- Item two
+# suite`
 	tokenized := Tokenize(input)
-	logger.New().Details(tokenized)
-	HTML := ""
+	//logger.New().Details(tokenized)
+	HTML := "<div>"
 	for _, v := range tokenized.Tokens {
 		HTML += v.Html
 		HTML += v.Content
-
 	}
-	fmt.Println(HTML)
+	HTML += "</div>"
 	Beautyfy(HTML)
 }
 func Beautyfy(html string) {

@@ -72,3 +72,20 @@ func ListTokenizeBlock(state *preprocessor.Markdown, skip int) bool {
 	}
 	return false
 }
+
+func ListTokenizeBlock2(state *preprocessor.Markdown, skip int) bool {
+	r1 := tokenizeBlockHeader(state, skip)
+	if r1 {
+		return true
+	}
+	r3 := tokenizeBlockList(state, skip)
+	if r3 {
+		return true
+	}
+	r4 := tokenizeBlockIndentedCode(state, skip)
+	if r4 {
+		return true
+	}
+
+	return false
+}

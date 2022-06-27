@@ -32,13 +32,24 @@ func tokenizeBlockList(state *preprocessor.Markdown, skip int) bool {
 	// On analyse chaque ligne de la liste
 	for index = data.lineIndex; index <= state.MaxIndex; index++ {
 		content := state.Lines[index]
-
+		logger.New().Error("Line: " + content)
 		start_blank_spaces := 0
 		is_item, off, start_blank_spaces = ulItem(content)
 		if is_item && start_blank_spaces == start_spaces {
 			handleOpenUl(state, index, &ul_opened)
 			handleOpenLi(state, index, &li_oppened)
-			ListTokenizeBlock(state, off+skip)
+			if ListTokenizeBlock2(state, off+skip) {
+				logger.New().Warn("True")
+			} else {
+				logger.New().Warn("False")
+				state.Tokens = append(state.Tokens, preprocessor.Token{
+					Token:   "inline",
+					Content: content,
+					Line:    index,
+					Block:   true,
+				})
+			}
+			logger.New().Details(state)
 			continue
 		}
 		// CONDITIONS DE FIN DE LISTE \\
@@ -49,13 +60,21 @@ func tokenizeBlockList(state *preprocessor.Markdown, skip int) bool {
 		if isEmptyLine(content) {
 			break
 		}
-		if start_blank_spaces >= 2+skip {
-			ListTokenizeBlock(state, 0)
-			continue
+		is_block := ListTokenizeBlock2(state, 0)
+		if is_block && start_blank_spaces < start_spaces+skip {
+			panic("TODO")
+		} else if is_block {
+		} else {
+			state.Tokens = append(state.Tokens, preprocessor.Token{
+				Token:   "inline",
+				Content: content,
+				Line:    index,
+				Block:   false,
+			})
 		}
 	}
 	logger.New().Error(index)
-	handleCloseLi(state, index-1, &li_oppened)
+	handleCloseLi(state, index, &li_oppened)
 	handleUlClose(state, index-1, &ul_opened)
 	return true
 }
