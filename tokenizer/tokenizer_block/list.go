@@ -6,7 +6,6 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
-//INFO: Ceci n'est que pour les listes de type "ul"
 func tokenizeBlockList(state *preprocessor.Markdown, skip int) bool {
 	// Get common informations
 	data, err := getInfos(state, skip)
@@ -16,9 +15,9 @@ func tokenizeBlockList(state *preprocessor.Markdown, skip int) bool {
 	leftTrimmed := strings.TrimLeft(data.lineContent, " ")
 
 	leadingSpaces := countLeadingSpaces(data.lineContent, leftTrimmed)
-	/*if leadingSpaces >= 4 {
+	if leadingSpaces >= 4 {
 		return false
-	}*/
+	}
 	if !isUlItem(leftTrimmed) {
 		return false
 	}
@@ -36,15 +35,7 @@ func tokenizeBlockList(state *preprocessor.Markdown, skip int) bool {
 		if is_item && start_blank_spaces == start_spaces {
 			handleOpenUl(state, index, &ul_opened)
 			handleOpenLi(state, index, &li_oppened)
-			if ListTokenizeBlock(state, off+skip) {
-			} else {
-				state.Tokens = append(state.Tokens, preprocessor.Token{
-					Token:   "inline",
-					Content: content,
-					Line:    index,
-					Block:   true,
-				})
-			}
+			ListTokenizeBlock(state, off+skip)
 			continue
 		}
 		// CONDITIONS DE FIN DE LISTE \\
@@ -55,7 +46,7 @@ func tokenizeBlockList(state *preprocessor.Markdown, skip int) bool {
 		if isEmptyLine(content) {
 			break
 		}
-		is_block := ListTokenizeBlock2(state, 0)
+		is_block := ListTokenizeBlock(state, 0)
 		if is_block && start_blank_spaces < start_spaces+skip {
 			panic("TODO")
 		} else if is_block {

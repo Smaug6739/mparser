@@ -59,7 +59,7 @@ func ListTokenizeBlock(state *preprocessor.Markdown, skip int) bool {
 	if r4 {
 		return true
 	}
-	r5 := tokenizeBlockParagraph(state, skip)
+	r5 := tokenizeListParagraph(state, skip)
 
 	r6 := tokenizeBlockLHeader(state, skip)
 	if r6 {

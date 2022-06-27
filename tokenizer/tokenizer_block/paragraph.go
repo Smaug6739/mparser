@@ -3,6 +3,7 @@ package tokenizer_block
 import (
 	"strings"
 
+	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
@@ -39,6 +40,29 @@ func tokenizeBlockParagraph(state *preprocessor.Markdown, skip int) bool {
 		state.Tokens = append(state.Tokens, tokenStart)
 		state.Tokens = append(state.Tokens, tokenInline)
 		state.Tokens = append(state.Tokens, tokenClose)
+	} else {
+		state.Tokens = append(state.Tokens, preprocessor.Token{Token: "empty", Line: data.lineIndex, Block: true})
+	}
+	return true
+}
+func tokenizeListParagraph(state *preprocessor.Markdown, skip int) bool {
+	data, err := getInfos(state, skip)
+	if err != nil {
+		return false
+	}
+	logger.New().Details(data.lastToken)
+	data.lineContent = strings.Trim(data.lineContent, " ")
+
+	tokenInline := preprocessor.Token{
+		Token:   "inline",
+		Content: strings.Trim(data.lineContent, " "),
+		Line:    data.lineIndex,
+		Block:   true,
+	}
+
+	//OPTIMIZATION: Repetition of len(line)
+	if len(data.lineContent) > 0 {
+		state.Tokens = append(state.Tokens, tokenInline)
 	} else {
 		state.Tokens = append(state.Tokens, preprocessor.Token{Token: "empty", Line: data.lineIndex, Block: true})
 	}

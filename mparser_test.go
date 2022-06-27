@@ -1,9 +1,13 @@
 package mparser
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"testing"
+
+	"github.com/Smaug6739/mparser/internal/logger"
 )
 
 func test(t *testing.T, name, input string, markdown, html, content []string) {
@@ -61,7 +65,8 @@ func TestTokenize(t *testing.T) {
 	input := `
 - Item one
 - Item two
-  - Item three`
+  - Item three
+- Item four`
 	tokenized := Tokenize(input)
 	//logger.New().Details(tokenized)
 	HTML := "<div>"
@@ -70,17 +75,33 @@ func TestTokenize(t *testing.T) {
 		HTML += v.Content
 	}
 	HTML += "</div>"
-	Beautyfy(HTML)
-}
-func Beautyfy(html string) {
-	type node struct {
-		Attr     []xml.Attr
-		XMLName  xml.Name
-		Children []node `xml:",any"`
-		Text     string `xml:",chardata"`
+	logger.New().Error(HTML)
+	logger.New().Details(tokenized)
+	r, e := formatXML([]byte(HTML))
+	if e != nil {
+		panic(e)
+	} else {
+		fmt.Println(string(r))
 	}
-	x := node{}
-	_ = xml.Unmarshal([]byte(html), &x)
-	buf, _ := xml.MarshalIndent(x, "", "  ")
-	fmt.Println(string(buf))
+}
+
+func formatXML(data []byte) ([]byte, error) {
+	b := &bytes.Buffer{}
+	decoder := xml.NewDecoder(bytes.NewReader(data))
+	encoder := xml.NewEncoder(b)
+	encoder.Indent("", "  ")
+	for {
+		token, err := decoder.Token()
+		if err == io.EOF {
+			encoder.Flush()
+			return b.Bytes(), nil
+		}
+		if err != nil {
+			return nil, err
+		}
+		err = encoder.EncodeToken(token)
+		if err != nil {
+			return nil, err
+		}
+	}
 }
