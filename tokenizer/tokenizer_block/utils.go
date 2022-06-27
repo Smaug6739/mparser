@@ -15,9 +15,6 @@ func countLeadingSpaces(str1, trimmedStr string) int {
 func isSpaceOrTab(character rune) bool {
 	return character == 32 /* space */ || character == 9 /* tab */
 }
-func isNumber(character rune) bool {
-	return character >= 48 && character <= 57
-}
 func isEmptyLine(str string) bool {
 	return strings.Trim(str, " ") == ""
 }
@@ -96,31 +93,6 @@ func isUlItem(str string) bool {
 	}
 	return delimiter != ""
 
-}
-
-func isOlItem(str string) (bool, int) {
-	var delimiter, nb string
-	var spaces int
-	for _, ch := range str {
-		if isNumber(ch) {
-			nb += string(ch)
-		}
-		if ch == 41 /* ) */ {
-			delimiter = ")"
-			break
-		}
-		if ch == 46 /* . */ {
-			delimiter = "."
-			break
-		}
-		if ch == 32 /* space */ {
-			spaces++
-		}
-	}
-	if delimiter != "" && spaces > 0 {
-		return true, len(nb) + len(delimiter) + spaces
-	}
-	return false, 0
 }
 
 func insert(slice *preprocessor.Tokens, value preprocessor.Token, index int) {

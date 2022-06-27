@@ -3,7 +3,6 @@ package tokenizer_block
 import (
 	"strings"
 
-	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
@@ -32,16 +31,13 @@ func tokenizeBlockList(state *preprocessor.Markdown, skip int) bool {
 	// On analyse chaque ligne de la liste
 	for index = data.lineIndex; index <= state.MaxIndex; index++ {
 		content := state.Lines[index]
-		logger.New().Error("Line: " + content)
 		start_blank_spaces := 0
 		is_item, off, start_blank_spaces = ulItem(content)
 		if is_item && start_blank_spaces == start_spaces {
 			handleOpenUl(state, index, &ul_opened)
 			handleOpenLi(state, index, &li_oppened)
-			if ListTokenizeBlock2(state, off+skip) {
-				logger.New().Warn("True")
+			if ListTokenizeBlock(state, off+skip) {
 			} else {
-				logger.New().Warn("False")
 				state.Tokens = append(state.Tokens, preprocessor.Token{
 					Token:   "inline",
 					Content: content,
@@ -49,7 +45,6 @@ func tokenizeBlockList(state *preprocessor.Markdown, skip int) bool {
 					Block:   true,
 				})
 			}
-			logger.New().Details(state)
 			continue
 		}
 		// CONDITIONS DE FIN DE LISTE \\
@@ -73,7 +68,6 @@ func tokenizeBlockList(state *preprocessor.Markdown, skip int) bool {
 			})
 		}
 	}
-	logger.New().Error(index)
 	handleCloseLi(state, index, &li_oppened)
 	handleUlClose(state, index-1, &ul_opened)
 	return true
