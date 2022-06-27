@@ -6,9 +6,9 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
-func tokenizeBlockIndentedCode(state *preprocessor.Markdown) bool {
+func tokenizeBlockIndentedCode(state *preprocessor.Markdown, skip int) bool {
 	// Get common informations
-	data, err := getInfos(state)
+	data, err := getInfos(state, skip)
 	if err != nil {
 		return false
 	}
@@ -33,7 +33,7 @@ func tokenizeBlockIndentedCode(state *preprocessor.Markdown) bool {
 	})
 	var lastIndex int
 	for index := data.lineIndex; index <= state.MaxIndex; index++ {
-		content := state.Lines[index]
+		content := removeSpaces(state.Lines[index], skip)
 		if isEmptyLine(content) {
 			break
 		}
@@ -54,11 +54,13 @@ func tokenizeBlockIndentedCode(state *preprocessor.Markdown) bool {
 		Token: "code_end",
 		Html:  "</code>",
 		Line:  lastIndex,
+		Block: true,
 	})
 	state.Tokens = append(state.Tokens, preprocessor.Token{
 		Token: "pre_end",
 		Html:  "</pre>",
 		Line:  lastIndex,
+		Block: true,
 	})
 
 	return false

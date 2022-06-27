@@ -6,9 +6,9 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
-func tokenizeBlockThematicBreak(state *preprocessor.Markdown) bool {
+func tokenizeBlockThematicBreak(state *preprocessor.Markdown, skip int) bool {
 	// Get common informations
-	data, err := getInfos(state)
+	data, err := getInfos(state, skip)
 	if err != nil {
 		return false
 	}
@@ -49,6 +49,6 @@ func tokenizeBlockThematicBreak(state *preprocessor.Markdown) bool {
 		Block:    true,
 	})
 
-	return false
+	return true
 
 }

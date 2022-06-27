@@ -1,17 +1,14 @@
 package tokenizer_block
 
 import (
-	"strconv"
 	"strings"
 
-	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
-// TODO: Before paragraph
-func tokenizeBlockLHeader(state *preprocessor.Markdown) bool {
+func tokenizeBlockLHeader(state *preprocessor.Markdown, skip int) bool {
 	// Get common informations
-	data, err := getInfos(state)
+	data, err := getInfos(state, skip)
 	if err != nil {
 		return false
 	}
@@ -50,7 +47,6 @@ func tokenizeBlockLHeader(state *preprocessor.Markdown) bool {
 	var openTokenIndex int
 	var closeTokenIndex int = data.lastTokenIndex
 	for i := data.lastTokenIndex; i >= 0; i-- {
-		logger.New().Warn("I: " + strconv.Itoa(i) + " Value: " + state.Tokens[i].Token)
 		if state.Tokens[i].Token == "paragraph_open" {
 			openTokenIndex = i
 			break

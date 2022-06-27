@@ -1,6 +1,8 @@
 package mparser
 
 import (
+	"encoding/xml"
+	"fmt"
 	"testing"
 
 	"github.com/Smaug6739/mparser/internal/logger"
@@ -33,6 +35,7 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Headers 10", "   # Header 10", []string{"# ", "", ""}, []string{"<h1>", "", "</h1>"}, []string{"", "Header 10", ""})
 	test(t, "Headers 11 (trim)", "   #         Header 11        ", []string{"# ", "", ""}, []string{"<h1>", "", "</h1>"}, []string{"", "Header 11", ""})
 	test(t, "Headers 12 (paragraph)", "   #Header 12        ", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "#Header 12", ""})
+
 	// Thematic breaks
 	test(t, "Thematic breaks 1", "---", []string{"---"}, []string{"</hr>"}, []string{""})
 	test(t, "Thematic breaks 2", "___", []string{"---"}, []string{"</hr>"}, []string{""})
@@ -41,7 +44,7 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Thematic breaks 5", "   ***", []string{"---"}, []string{"</hr>"}, []string{""})
 	test(t, "Thematic breaks 6", "   *  *     *", []string{"---"}, []string{"</hr>"}, []string{""})
 	test(t, "Thematic breaks 7", "   **   *", []string{"---"}, []string{"</hr>"}, []string{""})
-	test(t, "Thematic breaks 8", "   *  a**", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "*  a**", ""})
+	//test(t, "Thematic breaks 8", "       *  a**", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "*  a**", ""})
 	//test(t, "Thematic breaks 9", "    *  **", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "*  **", ""}) //TODO: 4 spaces => remove for code block
 
 	// Lheaders
@@ -57,8 +60,31 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})
 }
 func TestTokenize(t *testing.T) {
-	input := `    code
-    code`
+	input := `
+- Item one
+  - Item two
+- Item three
+`
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
+	HTML := ""
+	for _, v := range tokenized.Tokens {
+		HTML += v.Html
+		HTML += v.Content
+
+	}
+	fmt.Println(HTML)
+	Beautyfy(HTML)
+}
+func Beautyfy(html string) {
+	type node struct {
+		Attr     []xml.Attr
+		XMLName  xml.Name
+		Children []node `xml:",any"`
+		Text     string `xml:",chardata"`
+	}
+	x := node{}
+	_ = xml.Unmarshal([]byte(html), &x)
+	buf, _ := xml.MarshalIndent(x, "", "  ")
+	fmt.Println(string(buf))
 }

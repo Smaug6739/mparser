@@ -7,10 +7,10 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
-func tokenizeBlockHeader(state *preprocessor.Markdown) bool {
+func tokenizeBlockHeader(state *preprocessor.Markdown, skip int) bool {
 
 	// Get common informations
-	data, err := getInfos(state)
+	data, err := getInfos(state, skip)
 	if err != nil {
 		return false
 	}

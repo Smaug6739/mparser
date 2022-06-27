@@ -17,7 +17,7 @@ func prepar(str string) *Markdown {
 				Html:     "",
 				Markdown: "",
 				Line:     -1, // +1 = 0; so index match
-				Block:    false,
+				Block:    true,
 			},
 		},
 	}
