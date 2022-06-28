@@ -1,7 +1,6 @@
 package tokenizer_block
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/Smaug6739/mparser/preprocessor"
@@ -20,79 +19,6 @@ func isEmptyLine(str string) bool {
 }
 func removeSpaces(str string, nbToRemove int) string {
 	return str[nbToRemove:]
-}
-
-type Data struct {
-	lastTokenIndex int
-	lastToken      *preprocessor.Token
-	lineIndex      int
-	lineContent    string
-}
-
-func getInfos(state *preprocessor.Markdown, offset int) (*Data, error) {
-	lastTokenIndex := len(state.Tokens) - 1
-	var lastToken preprocessor.Token
-	for i := lastTokenIndex; i >= 0; i-- {
-		if state.Tokens[i].Block {
-			lastToken = state.Tokens[i]
-			break
-		}
-	}
-	lineIndex := lastToken.Line + 1
-	if lineIndex > state.MaxIndex {
-		return nil, errors.New("line number exceeds total of indexs")
-	}
-	lineContent := state.Lines[lineIndex]
-	if len(lineContent) < offset {
-		return nil, errors.New("offset exceeds line length")
-	}
-	return &Data{
-		lastTokenIndex: lastTokenIndex,
-		lastToken:      &lastToken,
-		lineIndex:      lineIndex,
-		lineContent:    lineContent[offset:],
-	}, nil
-}
-
-// ------------------LIST--------------------
-func ulItem(str string) (bool, int /* offset */, int /* blank_spaces */) {
-	var delimiter string = ""
-	var start_spaces int = 0
-	for _, ch := range str {
-
-		if ch == 45 /* - */ {
-			delimiter = "-"
-			break
-		} else if delimiter == "" && ch == 32 /* space */ {
-			start_spaces++
-		} else if ch == 32 /* space */ {
-			delimiter = "- "
-		} else {
-			break
-		}
-	}
-	if delimiter != "" {
-		return true, len(delimiter) + start_spaces, start_spaces
-	}
-	return false, 0, 0
-}
-func isUlItem(str string) bool {
-	var delimiter string
-	var spaces int
-	for _, ch := range str {
-		if ch == 45 /* - */ {
-			delimiter = "-"
-			break
-		} else if delimiter == "" && ch == 32 /* space */ {
-			spaces++
-		} else if ch == 32 /* space */ {
-			delimiter = "- "
-		} else {
-			break
-		}
-	}
-	return delimiter != ""
-
 }
 
 func insert(slice *preprocessor.Tokens, value preprocessor.Token, index int) {

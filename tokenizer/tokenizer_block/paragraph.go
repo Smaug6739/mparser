@@ -1,70 +1,39 @@
 package tokenizer_block
 
 import (
-	"strings"
-
-	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
 func tokenizeBlockParagraph(state *preprocessor.Markdown, skip int) bool {
-	data, err := getInfos(state, skip)
-	if err != nil {
+	data, ok := state.GetData()
+	if !ok {
 		return false
 	}
-	data.lineContent = strings.Trim(data.lineContent, " ")
-
-	tokenStart := preprocessor.Token{
-		Token: "paragraph_open",
-		Html:  "<p>",
-		Line:  data.lineIndex,
-		Block: true,
-	}
-	tokenInline := preprocessor.Token{
-		Token:   "inline",
-		Content: strings.Trim(data.lineContent, " "),
-		Line:    data.lineIndex,
-		Block:   false,
-	}
-	tokenClose := preprocessor.Token{
-		Token: "paragraph_close",
-		Html:  "</p>",
-		Line:  data.lineIndex,
-		Block: true,
-	}
-	//OPTIMIZATION: Repetition of len(line)
-	if state.Tokens[data.lastTokenIndex].Token == "paragraph_close" && data.lastToken.Line == data.lineIndex-1 && len(data.lineContent) > 0 {
-		state.Tokens[data.lastTokenIndex] = tokenInline
-		insert(&state.Tokens, tokenClose, data.lastTokenIndex+1)
-	} else if len(data.lineContent) > 0 {
-		state.Tokens = append(state.Tokens, tokenStart)
-		state.Tokens = append(state.Tokens, tokenInline)
-		state.Tokens = append(state.Tokens, tokenClose)
+	if data.LastToken.Token == "paragraph_close" {
+		state.Tokens[data.LastTokenSliceIndex].Line = data.LineIndex
+		insert(&state.Tokens, preprocessor.Token{
+			Token:   "inline",
+			Line:    data.LineIndex,
+			Content: data.LineContent,
+		}, data.LastTokenSliceIndex)
 	} else {
-		state.Tokens = append(state.Tokens, preprocessor.Token{Token: "empty", Line: data.lineIndex, Block: true})
-	}
-	return true
-}
-func tokenizeListParagraph(state *preprocessor.Markdown, skip int) bool {
-	data, err := getInfos(state, skip)
-	if err != nil {
-		return false
-	}
-	logger.New().Details(data.lastToken)
-	data.lineContent = strings.Trim(data.lineContent, " ")
-
-	tokenInline := preprocessor.Token{
-		Token:   "inline",
-		Content: strings.Trim(data.lineContent, " "),
-		Line:    data.lineIndex,
-		Block:   true,
-	}
-
-	//OPTIMIZATION: Repetition of len(line)
-	if len(data.lineContent) > 0 {
-		state.Tokens = append(state.Tokens, tokenInline)
-	} else {
-		state.Tokens = append(state.Tokens, preprocessor.Token{Token: "empty", Line: data.lineIndex, Block: true})
+		state.Tokens = append(state.Tokens, preprocessor.Token{
+			Token: "paragraph_open",
+			Html:  "<p>",
+			Line:  data.LineIndex,
+			Block: true,
+		})
+		state.Tokens = append(state.Tokens, preprocessor.Token{
+			Token:   "inline",
+			Content: data.LineContent,
+			Line:    data.LineIndex,
+		})
+		state.Tokens = append(state.Tokens, preprocessor.Token{
+			Token: "paragraph_close",
+			Html:  "</p>",
+			Line:  data.LineIndex,
+			Block: true,
+		})
 	}
 	return true
 }

@@ -25,7 +25,7 @@ func test(t *testing.T, name, input string, markdown, html, content []string) {
 	}
 }
 func TestTokenizeAuto(t *testing.T) {
-	test(t, "Headers 1", "# Header 1", []string{"# ", "", ""}, []string{"<h1>", "", "</h1>"}, []string{"", "Header 1", ""})
+	/*test(t, "Headers 1", "# Header 1", []string{"# ", "", ""}, []string{"<h1>", "", "</h1>"}, []string{"", "Header 1", ""})
 	test(t, "Headers 2", "## Header 2", []string{"## ", "", ""}, []string{"<h2>", "", "</h2>"}, []string{"", "Header 2", ""})
 	test(t, "Headers 3", "### Header 3", []string{"### ", "", ""}, []string{"<h3>", "", "</h3>"}, []string{"", "Header 3", ""})
 	test(t, "Headers 4", "#### Header 4", []string{"#### ", "", ""}, []string{"<h4>", "", "</h4>"}, []string{"", "Header 4", ""})
@@ -59,14 +59,12 @@ func TestTokenizeAuto(t *testing.T) {
 
 	// Paragraph
 	test(t, "Paragraph 1", "Text", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text", ""})
-	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})
+	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})*/
 }
 func TestTokenize(t *testing.T) {
-	input := `
-- Item one
-- Item two
-  - Item three
-- Item four`
+	input := `- Item one
+
+	- Item two`
 	tokenized := Tokenize(input)
 	//logger.New().Details(tokenized)
 	HTML := "<div>"
