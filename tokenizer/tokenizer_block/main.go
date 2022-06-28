@@ -16,8 +16,11 @@ func New(state *preprocessor.Markdown) {
 }
 
 func TokenizeBlock(state *preprocessor.Markdown, skip int) bool {
-	if tokenizeBlockEmpty(state, skip) {
+	if tokenizeEmpty(state, skip) {
 		return true
 	}
-	return tokenizeBlockParagraph(state, skip)
+	if tokenizeList(state, skip) {
+		return true
+	}
+	return tokenizeParagraph(state, skip)
 }

@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"testing"
-
-	"github.com/Smaug6739/mparser/internal/logger"
 )
 
 func test(t *testing.T, name, input string, markdown, html, content []string) {
@@ -62,19 +60,18 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})*/
 }
 func TestTokenize(t *testing.T) {
-	input := `- Item one
-
-	- Item two`
+	input := `
+- Item one
+  - Item two
+	- Item three
+`
 	tokenized := Tokenize(input)
-	//logger.New().Details(tokenized)
 	HTML := "<div>"
 	for _, v := range tokenized.Tokens {
 		HTML += v.Html
 		HTML += v.Content
 	}
 	HTML += "</div>"
-	logger.New().Error(HTML)
-	logger.New().Details(tokenized)
 	r, e := formatXML([]byte(HTML))
 	if e != nil {
 		panic(e)

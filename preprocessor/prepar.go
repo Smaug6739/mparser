@@ -24,6 +24,9 @@ func prepar(str string) *Markdown {
 	return &instance
 }
 func (md *Markdown) GetLine(index int) string {
+	if index > md.MaxIndex {
+		return ""
+	}
 	return md.Lines[index]
 }
 func (md *Markdown) GetLastTokenSliceIndex() int {
@@ -52,11 +55,15 @@ type Data struct {
 	LineContent         string
 }
 
-func (md *Markdown) GetData() (Data, bool) {
-	LastTokenSliceIndex := md.GetLastTokenSliceIndex()
-	LastToken := md.GetToken(LastTokenSliceIndex)
+func (md *Markdown) GetData(offset int) (Data, bool) {
+	LastToken, LastTokenSliceIndex := md.GetLastBlockToken()
 	LineIndex := LastToken.Line + 1
 	LineContent := md.GetLine(LineIndex)
+	if len(LineContent) >= offset {
+		LineContent = LineContent[offset:]
+	} else {
+		LineContent = ""
+	}
 	if LineIndex > md.MaxIndex {
 		return Data{}, false
 	}

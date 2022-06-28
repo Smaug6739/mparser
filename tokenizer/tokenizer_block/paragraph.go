@@ -4,12 +4,13 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
-func tokenizeBlockParagraph(state *preprocessor.Markdown, skip int) bool {
-	data, ok := state.GetData()
+func tokenizeParagraph(state *preprocessor.Markdown, offset int) bool {
+	data, ok := state.GetData(offset)
 	if !ok {
 		return false
 	}
-	if data.LastToken.Token == "paragraph_close" {
+	lastRealToken := state.GetLastToken() // Block or inline item
+	if lastRealToken.Token == "paragraph_close" {
 		state.Tokens[data.LastTokenSliceIndex].Line = data.LineIndex
 		insert(&state.Tokens, preprocessor.Token{
 			Token:   "inline",
@@ -17,23 +18,24 @@ func tokenizeBlockParagraph(state *preprocessor.Markdown, skip int) bool {
 			Content: data.LineContent,
 		}, data.LastTokenSliceIndex)
 	} else {
-		state.Tokens = append(state.Tokens, preprocessor.Token{
+		/*state.Tokens = append(state.Tokens, preprocessor.Token{
 			Token: "paragraph_open",
 			Html:  "<p>",
 			Line:  data.LineIndex,
 			Block: true,
-		})
+		})*/
 		state.Tokens = append(state.Tokens, preprocessor.Token{
 			Token:   "inline",
 			Content: data.LineContent,
 			Line:    data.LineIndex,
+			Block:   true,
 		})
-		state.Tokens = append(state.Tokens, preprocessor.Token{
+		/*state.Tokens = append(state.Tokens, preprocessor.Token{
 			Token: "paragraph_close",
 			Html:  "</p>",
 			Line:  data.LineIndex,
 			Block: true,
-		})
+		})*/
 	}
 	return true
 }
