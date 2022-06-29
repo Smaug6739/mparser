@@ -13,14 +13,25 @@ import (
 func test(t *testing.T, name, input string, markdown, html, content []string) {
 	tokenized := Tokenize(input)
 	for index, v := range tokenized.Tokens[1:] {
-		/*if v.Markdown != markdown[index] {
-			t.Error("[TEST FAIL (MARKDOWN)]: ", name, "\nInput: ", input, "\nExepted result: '", markdown[index]+"'", "\nResult: '"+v.Markdown+"'")
-		}*/
 		if v.Html != html[index] {
 			t.Error("[TEST FAIL (HTML)]: ", name, "\nInput: ", input, "\nExepted result: '", html[index]+"'", "\nResult: '"+v.Html+"'")
 		}
 		if v.Content != content[index] {
 			t.Error("[TEST FAIL (CONTENT)]: ", name, "\nInput: ", input, "\nExepted result: '"+content[index]+"'", "\nResult: '"+v.Content+"'")
+		}
+	}
+}
+func test2(t *testing.T, name, input string, result []string) {
+	tokenized := Tokenize(input)
+	for index, token := range tokenized.Tokens[1:] {
+		if token.Html != "" {
+			if result[index] != token.Html {
+				t.Errorf("TEST FAIL (HTML) %s :\nInput:%s\nExepted result: %s\nActual result:%s", name, input, result[index], token.Html)
+			}
+		} else {
+			if result[index] != token.Content {
+				t.Errorf("TEST FAIL (CONTENT) %s :\nInput:%s\nExepted result: %s\nActual result:%s", name, input, result[index], token.Content)
+			}
 		}
 	}
 }
@@ -52,30 +63,55 @@ func TestTokenizeAuto(t *testing.T) {
 	// Lheaders
 	test(t, "Line headers 1", "Header\n=", []string{"", "", "===", "==="}, []string{"<h1>", "", "</h1>", ""}, []string{"", "Header", "", "==="})
 	test(t, "Line headers 2", "Header\n---", []string{"", "", "---", "---"}, []string{"<h2>", "", "</h2>", ""}, []string{"", "Header", "", "---"})
-
-	// Indented code
+	*/
+	//Indented code
 	test(t, "Indented code 1", "    code", []string{"", "", "    ", "    "}, []string{"<pre>", "<code>", "", "</code>", "</pre>", ""}, []string{"", "", "    code", "", ""})
 	test(t, "Indented code 2", "    code\n    code", []string{"", "", "", "", "", ""}, []string{"<pre>", "<code>", "", "", "</code>", "</pre>"}, []string{"", "", "    code", "    code", "", ""})
 
 	// Paragraph
 	test(t, "Paragraph 1", "Text", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text", ""})
-	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})*/
+	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})
 
 	// Lists
-	test(t, "List 1", "- Item 1", []string{"", "", "", "", "", ""}, []string{"<ul>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", ""})
-	test(t, "List 1", "- Item 1\n- Item 2", []string{"", "", "", "", "", "", "", ""}, []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test2(t, "List 1", "- Item 1", []string{"<ul>", "<li>", "Item 1", "</li>", "</ul>"})
+	test2(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	test2(t, "List 3 (indented 1)", "- Item 1\n  - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List 4 (indented 2)", "- Item 1\n  - Item 2\n  - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List 5 (indented 3)", "- Item 1\n  - Item 2\n    - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "<ul>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List 6 (indented 4)", "- Item 1\n  - Item 2\n- Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List 7 (test blank lines 1)", "- Item 1\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	test2(t, "List 8 (test blank lines 2)", "- Item 1\n\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	/*test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
+	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})*/
 }
 func TestTokenize(t *testing.T) {
 	input := `
 - Item 1
 
-
-
-  - Item 2
-    - Item 3
-  - Item 4
-    suite
-- Item 5
+- Item 2
 
     suite`
 	tokenized := Tokenize(input)
