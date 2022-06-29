@@ -1,6 +1,7 @@
 package tokenizer_block
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/Smaug6739/mparser/preprocessor"
@@ -25,6 +26,8 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 		if first_start_spaces == -1 { // First iteration
 			first_start_spaces = leading_spaces // Save the first leading spaces
 		}
+		fmt.Println(content, leading_spaces == first_start_spaces)
+
 		if isEmptyLine(content) {
 			break // End of list
 		} else if leading_spaces == first_start_spaces && isUL(content) { // Next item without indentation
@@ -60,7 +63,7 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 }
 
 func isUL(str string) bool {
-	left_trimed := strings.Trim(str, " ")
+	left_trimed := strings.TrimLeft(str, " ")
 	if len(left_trimed) >= 2 && left_trimed[0] == '-' && left_trimed[1] == ' ' {
 		return true
 	}

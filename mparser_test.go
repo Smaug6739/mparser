@@ -62,7 +62,14 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})*/
 }
 func TestTokenize(t *testing.T) {
-	input := ``
+	input := `
+- item 1
+- 
+item 2
+d
+- item 3
+  - item 4
+    - item 5`
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
 	HTML := "<div>"
