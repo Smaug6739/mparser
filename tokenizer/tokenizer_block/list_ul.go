@@ -26,7 +26,9 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 		if first_start_spaces == -1 { // First iteration
 			first_start_spaces = leading_spaces // Save the first leading spaces
 		}
-
+		if !isEmptyLine(content) {
+			empty_lines = 0
+		}
 		if isEmptyLine(content) {
 			empty_lines++
 			state.Tokens = append(state.Tokens, preprocessor.Token{
@@ -36,7 +38,6 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 			})
 			//break // End of list
 		} else if empty_lines > 0 && !isUL(content) {
-			empty_lines = 0
 			break
 		} else if leading_spaces == first_start_spaces && isUL(content) { // Next item without indentation
 			closeLI(state, index-1, &open_li) // -1 because the line the line is from the previous line

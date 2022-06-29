@@ -70,8 +70,9 @@ func TestTokenize(t *testing.T) {
   - Item 2
     - Item 3
   - Item 4
-
-- Item 5`
+    suite
+- Item 5
+suite`
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
 	HTML := "<div>"
