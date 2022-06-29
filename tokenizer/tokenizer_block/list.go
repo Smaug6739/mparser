@@ -3,7 +3,6 @@ package tokenizer_block
 import (
 	"strings"
 
-	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
@@ -34,23 +33,22 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 			TokenizeBlock(state, leading_spaces+2, "inline")
 		} else if leading_spaces >= 2+offset && isUL(content) {
 			tokenizeList(state, leading_spaces)
-		} else if leading_spaces < 2+offset {
+		} else if leading_spaces < 2+offset && isUL(content) {
 			/*
 				If the line is a list but with previous indentation,
 				- Item A
 				  - Item B
-				- Item C
+				- Item C <= Handle this case
 			*/
 			break
 		} else {
-			logger.New().Error("ICI ELSE")
 			r := TokenizeBlock(state, offset+leading_spaces, "no_end")
 			if r {
 				insert(&state.Tokens, preprocessor.Token{Token: "li_close", Html: "</li>", Line: index, Block: true}, index)
 				insert(&state.Tokens, preprocessor.Token{Token: "ul_close", Html: "</ul>", Line: index, Block: true}, index)
 				return false
 			} else {
-				state.Tokens = append(state.Tokens, preprocessor.Token{Token: "inline", Html: "</li>", Line: index, Block: true})
+				state.Tokens = append(state.Tokens, preprocessor.Token{Token: "inline", Content: content, Line: index, Block: true})
 			}
 		}
 		index = state.GetLastToken().Line + 1

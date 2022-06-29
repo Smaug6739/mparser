@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"testing"
+
+	"github.com/Smaug6739/mparser/internal/logger"
 )
 
 func test(t *testing.T, name, input string, markdown, html, content []string) {
@@ -66,6 +68,7 @@ func TestTokenize(t *testing.T) {
 - Item three
 s`
 	tokenized := Tokenize(input)
+	logger.New().Details(tokenized)
 	HTML := "<div>"
 	for _, v := range tokenized.Tokens {
 		HTML += v.Html
