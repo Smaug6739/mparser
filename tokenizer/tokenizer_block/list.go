@@ -23,15 +23,15 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 		content := state.Lines[index]
 		leading_spaces := countLeadingSpaces(content, strings.TrimLeft(content, " "))
 		if first_start_spaces == -1 { // First iteration
-			first_start_spaces = leading_spaces
+			first_start_spaces = leading_spaces // Save the first leading spaces
 		}
 		if isEmptyLine(content) {
-			break
-		} else if leading_spaces == first_start_spaces && isUL(content) {
+			break // End of list
+		} else if leading_spaces == first_start_spaces && isUL(content) { // Next item without indentation
 			closeLI(state, index-1, &open_li) // -1 because the line the line is from the previous line
 			openLI(state, index, &open_ul, &open_li)
 			TokenizeBlock(state, leading_spaces+2, "inline")
-		} else if leading_spaces >= 2+offset && isUL(content) {
+		} else if leading_spaces >= 2+offset && isUL(content) { // Next item with indentation (minumum two spaces) (new list)
 			tokenizeList(state, leading_spaces)
 		} else if leading_spaces < 2+offset && isUL(content) {
 			/*
@@ -42,6 +42,7 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 			*/
 			break
 		} else {
+			//TODO: Test this
 			r := TokenizeBlock(state, offset+leading_spaces, "no_end")
 			if r {
 				insert(&state.Tokens, preprocessor.Token{Token: "li_close", Html: "</li>", Line: index, Block: true}, index)
