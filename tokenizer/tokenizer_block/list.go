@@ -7,7 +7,10 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
+var ul_call int = 0
+
 func tokenizeList(state *preprocessor.Markdown, offset int) bool {
+
 	var open_ul, open_li bool = false, false
 	var first_start_spaces int = -1
 	data, ok := state.GetData(offset)
@@ -15,18 +18,18 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 		return false
 	}
 	// If the line is not a list, return false
-	if !isUL(data.LineContent) {
+	if !isUL(strings.TrimLeft(data.LineContent, " ")) {
 		return false
 	}
+	ul_call++
 	index := data.LineIndex
 	for index <= state.MaxIndex {
 		content := state.Lines[index]
+		fmt.Println("content:", content, "ul_call:", ul_call)
 		leading_spaces := countLeadingSpaces(content, strings.Trim(content, " "))
 		if first_start_spaces == -1 {
 			first_start_spaces = leading_spaces
 		}
-
-		fmt.Println(content, leading_spaces, offset, leading_spaces >= 2+offset)
 		if isEmptyLine(content) {
 			break
 		} else if leading_spaces == first_start_spaces && isUL(content) {
@@ -34,8 +37,10 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 			openLI(state, index, &open_ul, &open_li)
 			TokenizeBlock(state, leading_spaces+2)
 		} else if leading_spaces >= 2+offset && TokenizeBlock(state, 2+offset) {
+		} else if leading_spaces < 2+offset {
+			break
 		} else {
-			panic("Pas encore géré")
+			TokenizeBlock(state, offset+leading_spaces)
 		}
 		index = state.GetLastToken().Line + 1
 	}

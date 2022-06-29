@@ -15,7 +15,7 @@ func isSpaceOrTab(character rune) bool {
 	return character == 32 /* space */ || character == 9 /* tab */
 }
 func isEmptyLine(str string) bool {
-	return strings.Trim(str, " ") == ""
+	return len(strings.Trim(str, " ")) == 0
 }
 func removeSpaces(str string, nbToRemove int) string {
 	return str[nbToRemove:]
