@@ -22,6 +22,9 @@ func TokenizeBlock(state *preprocessor.Markdown, skip int, end string) bool {
 	if tokenizeList(state, skip) {
 		return true
 	}
+	if tokenizeIndentedCode(state, skip) {
+		return true
+	}
 	if end == "paragraph" && tokenizeParagraph(state, skip) {
 		return true
 	} else if end == "inline" && tokenizeInline(state, skip) {
