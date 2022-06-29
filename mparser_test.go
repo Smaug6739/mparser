@@ -63,9 +63,15 @@ func TestTokenizeAuto(t *testing.T) {
 }
 func TestTokenize(t *testing.T) {
 	input := `
-- item 1
-- s
-paragraph`
+- Item 1
+
+
+
+  - Item 2
+    - Item 3
+  - Item 4
+
+- Item 5`
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
 	HTML := "<div>"
