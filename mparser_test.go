@@ -60,6 +60,10 @@ func TestTokenizeAuto(t *testing.T) {
 	// Paragraph
 	test(t, "Paragraph 1", "Text", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text", ""})
 	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})*/
+
+	// Lists
+	test(t, "List 1", "- Item 1", []string{"", "", "", "", "", ""}, []string{"<ul>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", ""})
+	test(t, "List 1", "- Item 1\n- Item 2", []string{"", "", "", "", "", "", "", ""}, []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})
 }
 func TestTokenize(t *testing.T) {
 	input := `
