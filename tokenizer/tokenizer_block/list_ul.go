@@ -47,10 +47,10 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 			tokenizeList(state, leading_spaces)
 		} else if leading_spaces < 2+offset && isUL(content) {
 			/*
-				If the line is a list but with previous indentation,
-				- Item A
-				  - Item B
-				- Item C <= Handle this case
+				If the line is a list but with previous indentation ()
+				- Item A (handled by ul1)
+				  - Item B (handled by ul2)
+				- Item C <= Handle this case (handled by ul1 NOT ul2)
 			*/
 			break
 		} else {
