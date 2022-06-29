@@ -61,10 +61,8 @@ func TestTokenizeAuto(t *testing.T) {
 }
 func TestTokenize(t *testing.T) {
 	input := `
-- Item one
-  - Item two
-    
-- Item three
+- Item one   
+- Item two
 `
 	tokenized := Tokenize(input)
 	HTML := "<div>"

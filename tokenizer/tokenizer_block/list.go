@@ -25,9 +25,9 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 	index := data.LineIndex
 	for index <= state.MaxIndex {
 		content := state.Lines[index]
-		fmt.Println("content:", content, "ul_call:", ul_call)
-		leading_spaces := countLeadingSpaces(content, strings.Trim(content, " "))
+		leading_spaces := countLeadingSpaces(content, strings.TrimLeft(content, " "))
 		if first_start_spaces == -1 {
+			fmt.Println("content:", content, "leading_spaces:", leading_spaces)
 			first_start_spaces = leading_spaces
 		}
 		if isEmptyLine(content) {
