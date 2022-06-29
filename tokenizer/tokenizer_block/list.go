@@ -1,13 +1,11 @@
 package tokenizer_block
 
 import (
-	"fmt"
 	"strings"
 
+	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
-
-var ul_call int = 0
 
 func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 
@@ -21,13 +19,11 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 	if !isUL(strings.TrimLeft(data.LineContent, " ")) {
 		return false
 	}
-	ul_call++
 	index := data.LineIndex
 	for index <= state.MaxIndex {
 		content := state.Lines[index]
 		leading_spaces := countLeadingSpaces(content, strings.TrimLeft(content, " "))
 		if first_start_spaces == -1 {
-			fmt.Println("content:", content, "leading_spaces:", leading_spaces)
 			first_start_spaces = leading_spaces
 		}
 		if isEmptyLine(content) {
@@ -35,12 +31,27 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 		} else if leading_spaces == first_start_spaces && isUL(content) {
 			closeLI(state, index-1, &open_li) // -1 because the line the line is from the previous line
 			openLI(state, index, &open_ul, &open_li)
-			TokenizeBlock(state, leading_spaces+2)
-		} else if leading_spaces >= 2+offset && TokenizeBlock(state, 2+offset) {
+			TokenizeBlock(state, leading_spaces+2, "inline")
+		} else if leading_spaces >= 2+offset && isUL(content) {
+			tokenizeList(state, leading_spaces)
 		} else if leading_spaces < 2+offset {
+			/*
+				If the line is a list but with previous indentation,
+				- Item A
+				  - Item B
+				- Item C
+			*/
 			break
 		} else {
-			TokenizeBlock(state, offset+leading_spaces)
+			logger.New().Error("ICI ELSE")
+			r := TokenizeBlock(state, offset+leading_spaces, "no_end")
+			if r {
+				insert(&state.Tokens, preprocessor.Token{Token: "li_close", Html: "</li>", Line: index, Block: true}, index)
+				insert(&state.Tokens, preprocessor.Token{Token: "ul_close", Html: "</ul>", Line: index, Block: true}, index)
+				return false
+			} else {
+				state.Tokens = append(state.Tokens, preprocessor.Token{Token: "inline", Html: "</li>", Line: index, Block: true})
+			}
 		}
 		index = state.GetLastToken().Line + 1
 	}
@@ -51,10 +62,6 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 
 func isUL(str string) bool {
 	left_trimed := strings.Trim(str, " ")
-	leading_spaces := countLeadingSpaces(str, left_trimed)
-	if leading_spaces >= 4 {
-		return true
-	}
 	if len(left_trimed) >= 2 && left_trimed[0] == '-' && left_trimed[1] == ' ' {
 		return true
 	}

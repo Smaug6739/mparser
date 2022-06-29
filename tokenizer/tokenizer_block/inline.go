@@ -5,7 +5,7 @@ import (
 )
 
 // END: Choice between inline and paragraph
-func tokenizeParagraph(state *preprocessor.Markdown, offset int) bool {
+func tokenizeInline(state *preprocessor.Markdown, offset int) bool {
 	data, ok := state.GetData(offset)
 	if !ok {
 		return false
@@ -20,23 +20,12 @@ func tokenizeParagraph(state *preprocessor.Markdown, offset int) bool {
 		}, data.LastTokenSliceIndex)
 	} else {
 		state.Tokens = append(state.Tokens, preprocessor.Token{
-			Token: "paragraph_open",
-			Html:  "<p>",
-			Line:  data.LineIndex,
-			Block: true,
-		})
-		state.Tokens = append(state.Tokens, preprocessor.Token{
 			Token:   "inline",
 			Content: data.LineContent,
 			Line:    data.LineIndex,
 			Block:   true,
 		})
-		state.Tokens = append(state.Tokens, preprocessor.Token{
-			Token: "paragraph_close",
-			Html:  "</p>",
-			Line:  data.LineIndex,
-			Block: true,
-		})
+
 	}
 	return true
 }
