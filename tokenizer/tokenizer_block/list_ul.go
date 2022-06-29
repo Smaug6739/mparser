@@ -51,6 +51,9 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 				insert(&state.Tokens, preprocessor.Token{Token: "li_close", Html: "</li>", Line: index, Block: true}, index)
 				insert(&state.Tokens, preprocessor.Token{Token: "ul_close", Html: "</ul>", Line: index, Block: true}, index)
 				return false
+			} else if state.GetLastToken().Token == "empty" {
+				// Nothing to do (it should be a paragraph block)
+				break
 			} else {
 				state.Tokens = append(state.Tokens, preprocessor.Token{Token: "inline", Content: content, Line: index, Block: true})
 			}
