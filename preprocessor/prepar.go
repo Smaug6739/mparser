@@ -13,11 +13,9 @@ func prepar(str string) *Markdown {
 		MaxIndex: len(lines) - 1,
 		Tokens: Tokens{
 			Token{
-				Token:    "",
-				Html:     "",
-				Markdown: "",
-				Line:     -1, // +1 = 0; so index match
-				Block:    true,
+				Token: "internal_init",
+				Line:  -1, // +1 = 0; so index match
+				Block: true,
 			},
 		},
 	}
