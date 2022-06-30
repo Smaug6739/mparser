@@ -108,12 +108,13 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "", "</li>", "<li>", "", "</li>", "</ul>"}, []string{"", "", "Item 1", "", "", "Item 2", "", ""})*/
 }
 func TestTokenize(t *testing.T) {
-	input := `
-- Item 1
+	/*input := `
+	- Item 1
 
-- Item 2
-
-    suite`
+	  -   Item 2 (TODO: 4 spaces = ERROR)
+	    suite`*/
+	input := `> Citation
+Two`
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
 	HTML := "<div>"
