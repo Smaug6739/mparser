@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/Smaug6739/mparser/internal/logger"
+	"github.com/Smaug6739/mparser/preprocessor"
 )
 
 func test(t *testing.T, name, input string, markdown, html, content []string) {
@@ -113,14 +114,27 @@ func TestTokenize(t *testing.T) {
 
 	  -   Item 2 (TODO: 4 spaces = ERROR)
 	    suite`*/
-	input := `> Citation
-Two`
+	input := `
+> Item 1
+>> Item This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+Copyright (c) 2022 Author. All rights reserved.
+file, You can obtain one at http://mozilla.org/MPL/2.0/. Suite
+
+> Block 2
+>>> Suite`
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
+	var last_token preprocessor.Token = tokenized.Tokens[0]
 	HTML := "<div>"
 	for _, v := range tokenized.Tokens {
 		HTML += v.Html
-		HTML += v.Content
+		if last_token.Content != "" && v.Content != "" {
+			HTML += "\n" + v.Content
+		} else {
+			HTML += v.Content
+		}
+		last_token = v
 	}
 	HTML += "</div>"
 	r, e := formatXML([]byte(HTML))
