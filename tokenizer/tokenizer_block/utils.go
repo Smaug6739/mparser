@@ -1,6 +1,8 @@
 package tokenizer_block
 
 import (
+	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/Smaug6739/mparser/preprocessor"
@@ -30,4 +32,21 @@ func insert(slice *preprocessor.Tokens, value preprocessor.Token, index int) {
 	copy((*slice)[index+1:], (*slice)[index:])
 
 	(*slice)[index] = value
+}
+
+func removeIndex(a *[]any, i int) {
+	// Remove the element at index i from a.
+	(*a)[i] = (*a)[len(*a)-1] // Copy last element to index i.
+	(*a)[len(*a)-1] = ""      // Erase last element (write zero value).
+	*a = (*a)[:len(*a)-1]     // Truncate slice.
+}
+func removeCharOfString(str string, index int) string {
+	a := str[:index] // First part
+	b := str[index+1:]
+
+	fmt.Println("REMOVE_CHAR_OF_STRING: ", strconv.Quote(str), "INDEX:", index, "A:", a, "B:", b)
+	return a + b
+}
+func removeFirstCharOfString(str string) string {
+	return str[1:]
 }
