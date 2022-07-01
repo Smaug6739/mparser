@@ -38,7 +38,12 @@ func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
 			}
 			TokenizeBlock(state, 0, "paragraph")
 		} else {
-			TokenizeBlock(state, 0, "paragraph")
+			//TODO: Test
+			if TokenizeBlock(state, 0, "no_end") {
+				insert(&state.Tokens, preprocessor.Token{Token: "quote_block_close", Html: "</blockquote>", Line: index, Block: true}, index)
+			} else {
+				TokenizeBlock(state, 0, "paragraph")
+			}
 		}
 		index = state.GetLastToken().Line + 1
 	}
