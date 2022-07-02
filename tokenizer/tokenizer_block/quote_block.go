@@ -1,6 +1,7 @@
 package tokenizer_block
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/Smaug6739/mparser/preprocessor"
@@ -9,7 +10,7 @@ import (
 func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
 
 	var open_quote bool = false
-	var max_quotes int = 0
+
 	data, ok := state.GetData(offset)
 	if !ok {
 		return false
@@ -19,20 +20,25 @@ func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
 	if !is_quote {
 		return false
 	}
+
 	index := data.LineIndex
 	for index <= state.MaxIndex {
 		content := state.Lines[index]
 		is_quote := isQuote(strings.TrimLeft(content, " "))
-		new_str := quoteOffset(content)
-		delimiter_size := countLeadingSpaces(content, new_str)
 		if isEmptyLine(content) {
 			break
 		} else if is_quote {
+			number_of_quotes := countDelimiters(content)
+			new_str := removeFirstCharOfString(strings.Trim(content, " "))
 			state.Lines[index] = new_str
-			if max_quotes < delimiter_size {
-				max_quotes = delimiter_size
-				openQuote(state, index, &open_quote)
+			fmt.Println(new_str)
+			for i := index + 1; i < state.MaxIndex && isQuote(state.Lines[i]); i++ {
+				number_of_quotes_2 := countDelimiters(state.Lines[i])
+				if number_of_quotes_2 < number_of_quotes {
+					state.Lines[i] = quoteOffset(state.Lines[i])
+				}
 			}
+			openQuote(state, index, &open_quote)
 			TokenizeBlock(state, 0, "paragraph")
 		} else {
 			//TODO: Test
@@ -44,27 +50,48 @@ func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
 		}
 		index = state.GetLastToken().Line + 1
 	}
+
 	closeQuote(state, index-1, &open_quote)
+
 	return true
 }
 
 // Return true if the string is a block quote and false if not.
 func isQuote(str string) bool {
-	if !strings.HasPrefix(str, ">") {
-		return false
-	}
-	return true
-}
-
-// Return also number of quote (>)
-func quoteOffset(str string) string {
-	separation_char := false
+	sep := false
 	for _, ch := range str {
-		if !separation_char && ch == '>' {
-			if !separation_char {
-				str = removeFirstCharOfString(str)
-				separation_char = true
-			}
+		if !sep && ch == ' ' {
+			continue
+		} else if !sep && ch == '>' {
+			sep = true
+			break
+		} else {
+			break
+		}
+	}
+	return sep
+}
+func countDelimiters(str string) int {
+	size := 0
+	for _, ch := range str {
+		if ch == ' ' {
+			continue
+		} else if ch == '>' {
+			size++
+		} else {
+			break
+		}
+	}
+	return size
+}
+func quoteOffset(str string) string {
+	quotes := 0
+	for _, ch := range str {
+		if ch == '>' {
+			str = removeFirstCharOfString(str)
+			quotes++
+		} else if ch == ' ' {
+			str = removeFirstCharOfString(str)
 		} else {
 			break
 		}

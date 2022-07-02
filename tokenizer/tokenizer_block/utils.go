@@ -50,3 +50,6 @@ func removeCharOfString(str string, index int) string {
 func removeFirstCharOfString(str string) string {
 	return str[1:]
 }
+func removePrefix(str string, nb int) string {
+	return str[nb:]
+}
