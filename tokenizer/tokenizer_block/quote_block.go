@@ -1,7 +1,6 @@
 package tokenizer_block
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/Smaug6739/mparser/preprocessor"
@@ -26,8 +25,6 @@ func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
 		is_quote := isQuote(strings.TrimLeft(content, " "))
 		new_str := quoteOffset(content)
 		delimiter_size := countLeadingSpaces(content, new_str)
-		fmt.Println("Line:", content, "is quote ?", is_quote)
-		fmt.Println("Quote size: ", delimiter_size)
 		if isEmptyLine(content) {
 			break
 		} else if is_quote {
