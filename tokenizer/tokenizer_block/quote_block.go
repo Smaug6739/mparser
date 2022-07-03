@@ -27,34 +27,33 @@ func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
 		if isEmptyLine(content) {
 			break
 		} else if is_quote {
-			fmt.Println("Chargé en tant que quote: ", content)
-			number_of_quotes := countDelimiters(content)
+			max_delimiters := countDelimiters(content)
 			if !inQuoteblock(&state.Tokens) {
 				for i := index + 1; i <= state.MaxIndex && isQuote(state.Lines[i]); i++ {
-					fmt.Println("Quote offset from:", content)
 					number_of_quotes_2 := countDelimiters(state.Lines[i])
-					if number_of_quotes_2 <= number_of_quotes {
+					if number_of_quotes_2 <= max_delimiters {
 						state.Lines[i] = quoteOffset(state.Lines[i], -1)
+						if state.GetLine(i)[0] == ' ' {
+							state.Lines[i] = removeFirstCharOfString(state.Lines[i])
+						}
 					} else {
-						fmt.Println("Ici on doit trouver 4: ", state.Lines[i])
-						state.Lines[i] = quoteOffset(state.Lines[i], number_of_quotes-1) // -1 because it should have one more quote
-						number_of_quotes = number_of_quotes_2
-						fmt.Println("A la sortie: ", state.Lines[i])
+						state.Lines[i] = quoteOffset(state.Lines[i], max_delimiters-1) // -1 because it should have one more quote
+						max_delimiters = number_of_quotes_2
 					}
+
 				}
 			}
-			new_str := removeFirstCharOfString(strings.Trim(content, " "))
+			fmt.Println(content)
+			new_str := removeFirstCharOfString(content)
 			state.Lines[index] = new_str
+			if state.Lines[index][0] == ' ' {
+				state.Lines[index] = removeFirstCharOfString(state.GetLine(index))
+			}
 			openQuote(state, index, &open_quote)
 			TokenizeBlock(state, 0, "paragraph")
 		} else {
 			//TODO: Test
-			if TokenizeBlock(state, 0, "no_end") {
-				insert(&state.Tokens, preprocessor.Token{Token: "quote_block_close", Html: "</blockquote>", Line: index, Block: true}, index)
-				return true
-			} else {
-				TokenizeBlock(state, 0, "paragraph")
-			}
+			TokenizeBlock(state, 0, "paragraph")
 		}
 		index = state.GetLastToken().Line + 1
 	}
@@ -109,7 +108,7 @@ func quoteOffset(str string, max int) string {
 		if ch == '>' && (quotes < max || max == -1) {
 			str = removeFirstCharOfString(str)
 			quotes++
-		} else if ch == ' ' {
+		} else if ch == ' ' && quotes == 0 {
 			str = removeFirstCharOfString(str)
 		} else {
 			break
