@@ -1,6 +1,7 @@
 package tokenizer_block
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/Smaug6739/mparser/preprocessor"
@@ -54,11 +55,13 @@ func tokenizeList(state *preprocessor.Markdown, offset int) bool {
 			*/
 			break
 		} else {
+			last_index_before := len(state.Tokens) - 1
 			//TODO: Test this
 			r := TokenizeBlock(state, offset+leading_spaces, "no_end")
 			if r {
-				insert(&state.Tokens, preprocessor.Token{Token: "li_close", Html: "</li>", Line: index, Block: true}, index)
-				insert(&state.Tokens, preprocessor.Token{Token: "ul_close", Html: "</ul>", Line: index, Block: true}, index)
+				fmt.Println(index)
+				insert(&state.Tokens, preprocessor.Token{Token: "li_close", Html: "</li>", Line: index, Block: true}, last_index_before+1)
+				insert(&state.Tokens, preprocessor.Token{Token: "ul_close", Html: "</ul>", Line: index, Block: true}, last_index_before+2)
 				return false // Return true TODO
 			} else if state.GetLastToken().Token == "empty" {
 				// Nothing to do (it should be a paragraph block)
