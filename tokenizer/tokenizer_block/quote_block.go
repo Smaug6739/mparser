@@ -8,7 +8,6 @@ import (
 )
 
 func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
-
 	var open_quote bool = false
 
 	data, ok := state.GetData(offset)
@@ -28,22 +27,31 @@ func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
 		if isEmptyLine(content) {
 			break
 		} else if is_quote {
+			fmt.Println("Chargé en tant que quote: ", content)
 			number_of_quotes := countDelimiters(content)
-			new_str := removeFirstCharOfString(strings.Trim(content, " "))
-			state.Lines[index] = new_str
-			fmt.Println(new_str)
-			for i := index + 1; i < state.MaxIndex && isQuote(state.Lines[i]); i++ {
-				number_of_quotes_2 := countDelimiters(state.Lines[i])
-				if number_of_quotes_2 < number_of_quotes {
-					state.Lines[i] = quoteOffset(state.Lines[i])
+			if !inQuoteblock(&state.Tokens) {
+				for i := index + 1; i <= state.MaxIndex && isQuote(state.Lines[i]); i++ {
+					fmt.Println("Quote offset from:", content)
+					number_of_quotes_2 := countDelimiters(state.Lines[i])
+					if number_of_quotes_2 <= number_of_quotes {
+						state.Lines[i] = quoteOffset(state.Lines[i], -1)
+					} else {
+						fmt.Println("Ici on doit trouver 4: ", state.Lines[i])
+						state.Lines[i] = quoteOffset(state.Lines[i], number_of_quotes-1) // -1 because it should have one more quote
+						number_of_quotes = number_of_quotes_2
+						fmt.Println("A la sortie: ", state.Lines[i])
+					}
 				}
 			}
+			new_str := removeFirstCharOfString(strings.Trim(content, " "))
+			state.Lines[index] = new_str
 			openQuote(state, index, &open_quote)
 			TokenizeBlock(state, 0, "paragraph")
 		} else {
 			//TODO: Test
 			if TokenizeBlock(state, 0, "no_end") {
 				insert(&state.Tokens, preprocessor.Token{Token: "quote_block_close", Html: "</blockquote>", Line: index, Block: true}, index)
+				return true
 			} else {
 				TokenizeBlock(state, 0, "paragraph")
 			}
@@ -54,6 +62,17 @@ func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
 	closeQuote(state, index-1, &open_quote)
 
 	return true
+}
+func inQuoteblock(tokens *preprocessor.Tokens) bool {
+	for i := len(*tokens) - 1; i >= 0; i-- {
+		if (*tokens)[i].Token == "quote_block_close" {
+			break
+		}
+		if (*tokens)[i].Token == "quote_block_open" {
+			return true
+		}
+	}
+	return false
 }
 
 // Return true if the string is a block quote and false if not.
@@ -84,10 +103,10 @@ func countDelimiters(str string) int {
 	}
 	return size
 }
-func quoteOffset(str string) string {
+func quoteOffset(str string, max int) string {
 	quotes := 0
 	for _, ch := range str {
-		if ch == '>' {
+		if ch == '>' && (quotes < max || max == -1) {
 			str = removeFirstCharOfString(str)
 			quotes++
 		} else if ch == ' ' {

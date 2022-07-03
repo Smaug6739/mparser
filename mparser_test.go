@@ -92,9 +92,9 @@ func TestTokenizeAuto(t *testing.T) {
 	test2(t, "Quote 5 (other block 3)", "> Citation 1\n>>> Citation 2\nCitation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
 	test2(t, "Quote 6 (other block 4)", "> Citation 1\n>>> Citation 2\n> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
 	test2(t, "Quote 7 (other block 5)", "> Citation 1\n>>> Citation 2\n>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	//test2(t, "Quote 8 (other block 6)", "> Citation 1\n>>> Citation 2\n>>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	//test2(t, "Quote 9 (other block 7)", "> Citation 1\n>>> Citation 2\n> > Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	//test2(t, "Quote 10 (other block 8)", "> Citation 1\n>>> Citation 2\n>>> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+	test2(t, "Quote 8 (other block 6)", "> Citation 1\n>>> Citation 2\n>>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+	test2(t, "Quote 9 (other block 7)", "> Citation 1\n>>> Citation 2\n> > Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+	test2(t, "Quote 10 (other block 8)", "> Citation 1\n>>> Citation 2\n>>> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
 }
 func TestTokenize(t *testing.T) {
 	/*input := `
@@ -104,9 +104,8 @@ func TestTokenize(t *testing.T) {
 	    suite`*/
 	input := `
 > Citation 1
-
->>> Test 3
->> Test 4
+>>> Citation 2
+>> Citation 3
 `
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
