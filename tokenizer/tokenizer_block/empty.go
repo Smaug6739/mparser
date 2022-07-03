@@ -4,8 +4,8 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
-func tokenizeEmpty(state *preprocessor.Markdown, offset int) bool {
-	data, ok := state.GetData(offset)
+func tokenizeEmpty(state *preprocessor.Markdown, options Options) bool {
+	data, ok := state.GetData(options.offset)
 	if !ok {
 		return false
 	}

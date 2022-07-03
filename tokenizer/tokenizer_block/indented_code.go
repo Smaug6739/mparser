@@ -6,8 +6,8 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
-func tokenizeIndentedCode(state *preprocessor.Markdown, offset int) bool {
-	data, ok := state.GetData(offset)
+func tokenizeIndentedCode(state *preprocessor.Markdown, options Options) bool {
+	data, ok := state.GetData(options.offset)
 	if !ok {
 		return false
 	}
@@ -32,7 +32,7 @@ func tokenizeIndentedCode(state *preprocessor.Markdown, offset int) bool {
 	})
 	var lastIndex int
 	for index := data.LineIndex; index <= state.MaxIndex; index++ {
-		content := removeSpaces(state.Lines[index], offset)
+		content := removeSpaces(state.Lines[index], options.offset)
 		if isEmptyLine(content) {
 			break
 		}

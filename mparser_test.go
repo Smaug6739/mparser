@@ -84,7 +84,7 @@ func TestTokenizeAuto(t *testing.T) {
 	test2(t, "List 8 (test blank lines 2)", "- Item 1\n\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
 
 	// Quotes (citations)
-	/*test2(t, "Quote 1 (normal)", "> Citation 1", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "</blockquote>"})
+	test2(t, "Quote 1 (normal)", "> Citation 1", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "</blockquote>"})
 	test2(t, "Quote 2 (next line 1)", "> Citation 1\nCitation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
 	test2(t, "Quote 3 (next line 2)", "> Citation 1\n> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
 	test2(t, "Quote 4 (other block 1)", "> Citation 1\n>> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<p>", "Citation 2", "</p>", "</blockquote>", "</blockquote>"})
@@ -95,7 +95,7 @@ func TestTokenizeAuto(t *testing.T) {
 	test2(t, "Quote 8 (other block 6)", "> Citation 1\n>>> Citation 2\n>>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
 	test2(t, "Quote 9 (other block 7)", "> Citation 1\n>>> Citation 2\n> > Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
 	test2(t, "Quote 10 (other block 8)", "> Citation 1\n>>> Citation 2\n>>> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	*/
+
 }
 func TestTokenize(t *testing.T) {
 	/*input := `
@@ -106,8 +106,9 @@ func TestTokenize(t *testing.T) {
 	/*input := `
 	  `*/ // TODO: Paragraph empty
 	input := `
-> - Item
+> - Item 1
 >> - Item 2
+- Item 3
 `
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)

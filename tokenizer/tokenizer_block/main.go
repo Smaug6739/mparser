@@ -1,36 +1,39 @@
 package tokenizer_block
 
 import (
-	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
 func New(state *preprocessor.Markdown) {
 	for state.Tokens[len(state.Tokens)-1].Line < state.MaxIndex {
-		logger.New().Warn("Loop tokenizer main")
-		r := TokenizeBlock(state, 0, "paragraph")
+		r := TokenizeBlock(state, Options{max_index: state.MaxIndex}, "paragraph")
 		if !r {
 			break
 		}
 	}
 }
 
-func TokenizeBlock(state *preprocessor.Markdown, skip int, end string) bool {
-	if tokenizeEmpty(state, skip) {
+type Options struct {
+	offset    int
+	max_index int
+}
+
+func TokenizeBlock(state *preprocessor.Markdown, options Options, end string) bool {
+	if tokenizeEmpty(state, options) {
 		return true
 	}
-	if tokenizeList(state, skip) {
+	if tokenizeQuoteBlock(state, options) {
 		return true
 	}
-	if tokenizeQuoteBlock(state, skip) {
+	if tokenizeList(state, options) {
 		return true
 	}
-	if tokenizeIndentedCode(state, skip) {
+	if tokenizeIndentedCode(state, options) {
 		return true
 	}
-	if end == "paragraph" && tokenizeParagraph(state, skip) {
+	if end == "paragraph" && tokenizeParagraph(state, options) {
 		return true
-	} else if end == "inline" && tokenizeInline(state, skip) {
+	} else if end == "inline" && tokenizeInline(state, options) {
 		return true
 	}
 	return false

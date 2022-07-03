@@ -1,16 +1,15 @@
 package tokenizer_block
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
-func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
+func tokenizeQuoteBlock(state *preprocessor.Markdown, options Options) bool {
 	var open_quote bool = false
 
-	data, ok := state.GetData(offset)
+	data, ok := state.GetData(options.offset)
 	if !ok {
 		return false
 	}
@@ -30,30 +29,38 @@ func tokenizeQuoteBlock(state *preprocessor.Markdown, offset int) bool {
 			max_delimiters := countDelimiters(content)
 			if !inQuoteblock(&state.Tokens) {
 				for i := index + 1; i <= state.MaxIndex && isQuote(state.Lines[i]); i++ {
-					number_of_quotes_2 := countDelimiters(state.Lines[i])
-					if number_of_quotes_2 <= max_delimiters {
-						state.Lines[i] = quoteOffset(state.Lines[i], -1)
+					delimiters := countDelimiters(state.GetLine(i))
+					if delimiters <= max_delimiters {
+						state.Lines[i] = quoteOffset(state.GetLine(i), -1)
 						if state.GetLine(i)[0] == ' ' {
-							state.Lines[i] = removeFirstCharOfString(state.Lines[i])
+							state.Lines[i] = removeFirstCharOfString(state.GetLine(i))
 						}
 					} else {
 						state.Lines[i] = quoteOffset(state.Lines[i], max_delimiters-1) // -1 because it should have one more quote
-						max_delimiters = number_of_quotes_2
+						max_delimiters = delimiters
 					}
-
 				}
 			}
-			fmt.Println(content)
 			new_str := removeFirstCharOfString(content)
 			state.Lines[index] = new_str
-			if state.Lines[index][0] == ' ' {
+			if state.GetLine(index)[0] == ' ' {
 				state.Lines[index] = removeFirstCharOfString(state.GetLine(index))
 			}
+			max_index := state.MaxIndex
+			if !isQuote(state.GetLine(index + 1)) {
+				max_index = index
+			}
+
 			openQuote(state, index, &open_quote)
-			TokenizeBlock(state, 0, "paragraph")
+			TokenizeBlock(state, Options{max_index: max_index}, "paragraph")
 		} else {
-			//TODO: Test
-			TokenizeBlock(state, 0, "paragraph")
+			last_index_before := len(state.Tokens) - 1
+			if TokenizeBlock(state, Options{max_index: state.MaxIndex}, "no_end") {
+				insert(&state.Tokens, preprocessor.Token{Token: "blockquote_close", Html: "</blockquote>", Line: index, Block: true}, last_index_before+1)
+				return true
+			} else {
+				TokenizeBlock(state, Options{max_index: state.MaxIndex}, "paragraph")
+			}
 		}
 		index = state.GetLastToken().Line + 1
 	}

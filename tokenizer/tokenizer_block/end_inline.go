@@ -5,8 +5,8 @@ import (
 )
 
 // END: Choice between inline and paragraph
-func tokenizeInline(state *preprocessor.Markdown, offset int) bool {
-	data, ok := state.GetData(offset)
+func tokenizeInline(state *preprocessor.Markdown, options Options) bool {
+	data, ok := state.GetData(options.offset)
 	if !ok {
 		return false
 	}
