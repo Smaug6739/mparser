@@ -14,8 +14,9 @@ func New(state *preprocessor.Markdown) {
 }
 
 type Options struct {
-	offset    int
-	max_index int
+	offset      int
+	max_index   int
+	must_prefix string
 }
 
 func TokenizeBlock(state *preprocessor.Markdown, options Options, end string) bool {
