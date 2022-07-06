@@ -22,22 +22,22 @@ func tokenizeParagraph(state *preprocessor.Markdown, options Options) bool {
 		}, data.LastTokenSliceIndex)
 	} else {
 		state.Tokens = append(state.Tokens, preprocessor.Token{
-			Token: "paragraph_open",
-			Html:  "<p>",
-			Line:  data.LineIndex,
-			Block: true,
+			Token:  "paragraph_open",
+			Html:   "<p>",
+			Line:   data.LineIndex,
+			Closer: true,
 		})
 		state.Tokens = append(state.Tokens, preprocessor.Token{
 			Token:   "inline",
 			Content: strings.Trim(data.LineContent, " "),
 			Line:    data.LineIndex,
-			Block:   true,
+			Closer:  true,
 		})
 		state.Tokens = append(state.Tokens, preprocessor.Token{
-			Token: "paragraph_close",
-			Html:  "</p>",
-			Line:  data.LineIndex,
-			Block: true,
+			Token:  "paragraph_close",
+			Html:   "</p>",
+			Line:   data.LineIndex,
+			Closer: true,
 		})
 	}
 	return true

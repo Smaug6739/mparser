@@ -74,29 +74,30 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})
 
 	// Lists
-	test2(t, "List 1", "- Item 1", []string{"<ul>", "<li>", "Item 1", "</li>", "</ul>"})
-	test2(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
-	test2(t, "List 3 (indented 1)", "- Item 1\n  - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
-	test2(t, "List 4 (indented 2)", "- Item 1\n  - Item 2\n  - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "</ul>"})
-	test2(t, "List 5 (indented 3)", "- Item 1\n  - Item 2\n    - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "<ul>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "</ul>", "</li>", "</ul>"})
-	test2(t, "List 6 (indented 4)", "- Item 1\n  - Item 2\n- Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
-	test2(t, "List 7 (test blank lines 1)", "- Item 1\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
-	test2(t, "List 8 (test blank lines 2)", "- Item 1\n\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
-
+	/*	test2(t, "List 1", "- Item 1", []string{"<ul>", "<li>", "Item 1", "</li>", "</ul>"})
+		test2(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+		test2(t, "List 3 (indented 1)", "- Item 1\n  - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
+		test2(t, "List 4 (indented 2)", "- Item 1\n  - Item 2\n  - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "</ul>"})
+		test2(t, "List 5 (indented 3)", "- Item 1\n  - Item 2\n    - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "<ul>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "</ul>", "</li>", "</ul>"})
+		test2(t, "List 6 (indented 4)", "- Item 1\n  - Item 2\n- Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+		test2(t, "List 7 (test blank lines 1)", "- Item 1\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+		test2(t, "List 8 (test blank lines 2)", "- Item 1\n\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	*/
 	// Quotes (citations)
-	test2(t, "Quote 1 (normal)", "> Citation 1", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "</blockquote>"})
-	test2(t, "Quote 2 (next line 1)", "> Citation 1\nCitation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
-	test2(t, "Quote 3 (next line 2)", "> Citation 1\n> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
-	test2(t, "Quote 4 (other block 1)", "> Citation 1\n>> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<p>", "Citation 2", "</p>", "</blockquote>", "</blockquote>"})
-	test2(t, "Quote 4 (other block 2)", "> Citation 1\n>>> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	test2(t, "Quote 5 (other block 3)", "> Citation 1\n>>> Citation 2\nCitation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	test2(t, "Quote 6 (other block 4)", "> Citation 1\n>>> Citation 2\n> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	test2(t, "Quote 7 (other block 5)", "> Citation 1\n>>> Citation 2\n>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	test2(t, "Quote 8 (other block 6)", "> Citation 1\n>>> Citation 2\n>>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	test2(t, "Quote 9 (other block 7)", "> Citation 1\n>>> Citation 2\n> > Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	test2(t, "Quote 10 (other block 8)", "> Citation 1\n>>> Citation 2\n>>> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-
+	/*	test2(t, "Quote 1 (normal)", "> Citation 1", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "</blockquote>"})
+		test2(t, "Quote 2 (next line 1)", "> Citation 1\nCitation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
+		test2(t, "Quote 3 (next line 2)", "> Citation 1\n> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
+		test2(t, "Quote 4 (other block 1)", "> Citation 1\n>> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<p>", "Citation 2", "</p>", "</blockquote>", "</blockquote>"})
+		test2(t, "Quote 4 (other block 2)", "> Citation 1\n>>> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+		test2(t, "Quote 5 (other block 3)", "> Citation 1\n>>> Citation 2\nCitation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+		test2(t, "Quote 6 (other block 4)", "> Citation 1\n>>> Citation 2\n> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+		test2(t, "Quote 7 (other block 5)", "> Citation 1\n>>> Citation 2\n>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+		test2(t, "Quote 8 (other block 6)", "> Citation 1\n>>> Citation 2\n>>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+		test2(t, "Quote 9 (other block 7)", "> Citation 1\n>>> Citation 2\n> > Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+		test2(t, "Quote 10 (other block 8)", "> Citation 1\n>>> Citation 2\n>>> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+	*/
 }
+
 func TestTokenize(t *testing.T) {
 	/*input := `
 	- Item 1
@@ -106,8 +107,8 @@ func TestTokenize(t *testing.T) {
 	/*input := `
 	  `*/ // TODO: Paragraph empty
 	input := `
->> - Item 2
-- Item 3
+-  Item 2
+  - Item 3
 `
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
@@ -123,7 +124,6 @@ func TestTokenize(t *testing.T) {
 		last_token = v
 	}
 	HTML += "</div>"
-	fmt.Println(HTML)
 	r, e := formatXML([]byte(HTML))
 	if e != nil {
 		panic(e)

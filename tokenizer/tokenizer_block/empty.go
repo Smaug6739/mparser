@@ -11,9 +11,9 @@ func tokenizeEmpty(state *preprocessor.Markdown, options Options) bool {
 	}
 	if isEmptyLine(data.LineContent) {
 		state.Tokens = append(state.Tokens, preprocessor.Token{
-			Token: "empty",
-			Line:  data.LineIndex,
-			Block: true,
+			Token:  "empty",
+			Line:   data.LineIndex,
+			Closer: true,
 		})
 		return true
 	}

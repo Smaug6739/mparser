@@ -13,9 +13,9 @@ func prepar(str string) *Markdown {
 		MaxIndex: len(lines) - 1,
 		Tokens: Tokens{
 			Token{
-				Token: "internal_init",
-				Line:  -1, // +1 = 0; so index match
-				Block: true,
+				Token:  "internal_init",
+				Line:   -1, // +1 = 0; so index match
+				Closer: true,
 			},
 		},
 	}
@@ -36,7 +36,7 @@ func (md *Markdown) GetLastToken() Token {
 
 func (md *Markdown) GetLastBlockToken() (Token, int) {
 	for i := len(md.Tokens) - 1; i >= 0; i-- {
-		if md.Tokens[i].Block {
+		if md.Tokens[i].Closer {
 			return md.Tokens[i], i
 		}
 	}

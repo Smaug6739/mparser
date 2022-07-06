@@ -23,7 +23,7 @@ func tokenizeInline(state *preprocessor.Markdown, options Options) bool {
 			Token:   "inline",
 			Content: data.LineContent,
 			Line:    data.LineIndex,
-			Block:   true,
+			Closer:  true,
 		})
 
 	}

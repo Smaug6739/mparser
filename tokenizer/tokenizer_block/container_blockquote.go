@@ -56,7 +56,7 @@ func tokenizeQuoteBlock(state *preprocessor.Markdown, options Options) bool {
 		} else {
 			last_index_before := len(state.Tokens) - 1
 			if TokenizeBlock(state, Options{max_index: state.MaxIndex}, "no_end") {
-				insert(&state.Tokens, preprocessor.Token{Token: "blockquote_close", Html: "</blockquote>", Line: index, Block: true}, last_index_before+1)
+				insert(&state.Tokens, preprocessor.Token{Token: "blockquote_close", Html: "</blockquote>", Line: index, Closer: true}, last_index_before+1)
 				return true
 			} else {
 				TokenizeBlock(state, Options{max_index: state.MaxIndex}, "paragraph")
@@ -127,10 +127,10 @@ func quoteOffset(str string, max int) string {
 func openQuote(state *preprocessor.Markdown, index int, open_quote *bool) {
 	if !*open_quote {
 		state.Tokens = append(state.Tokens, preprocessor.Token{
-			Token: "quote_block_open",
-			Html:  "<blockquote>",
-			Line:  index,
-			Block: false,
+			Token:  "quote_block_open",
+			Html:   "<blockquote>",
+			Line:   index,
+			Closer: false,
 		})
 		*open_quote = true
 	}
@@ -138,10 +138,10 @@ func openQuote(state *preprocessor.Markdown, index int, open_quote *bool) {
 func closeQuote(state *preprocessor.Markdown, index int, open_quote *bool) {
 	if *open_quote {
 		state.Tokens = append(state.Tokens, preprocessor.Token{
-			Token: "quote_block_close",
-			Html:  "</blockquote>",
-			Line:  index,
-			Block: true,
+			Token:  "quote_block_close",
+			Html:   "</blockquote>",
+			Line:   index,
+			Closer: true,
 		})
 		*open_quote = false
 	}

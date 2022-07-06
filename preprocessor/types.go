@@ -15,5 +15,12 @@ type Token struct {
 	Markdown string // markdown render
 	Content  string // The content of literal
 	Line     int    // the line in array of lines (start to line -1 (index+1) so first line is index [0])
-	Block    bool   // If the token is a block or inline
+	Closer   bool   // If the token is a closer or not
+	Meta     Meta   // The meta data
+}
+
+type Meta struct {
+	leading_spaces int
+	offset         int
+	level          int
 }

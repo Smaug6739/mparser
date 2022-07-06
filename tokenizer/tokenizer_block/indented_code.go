@@ -50,16 +50,16 @@ func tokenizeIndentedCode(state *preprocessor.Markdown, options Options) bool {
 		})
 	}
 	state.Tokens = append(state.Tokens, preprocessor.Token{
-		Token: "code_end",
-		Html:  "</code>",
-		Line:  lastIndex,
-		Block: true,
+		Token:  "code_end",
+		Html:   "</code>",
+		Line:   lastIndex,
+		Closer: true,
 	})
 	state.Tokens = append(state.Tokens, preprocessor.Token{
-		Token: "pre_end",
-		Html:  "</pre>",
-		Line:  lastIndex,
-		Block: true,
+		Token:  "pre_end",
+		Html:   "</pre>",
+		Line:   lastIndex,
+		Closer: true,
 	})
 
 	return false

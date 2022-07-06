@@ -23,9 +23,9 @@ func TokenizeBlock(state *preprocessor.Markdown, options Options, end string) bo
 	if tokenizeEmpty(state, options) {
 		return true
 	}
-	if tokenizeQuoteBlock(state, options) {
+	/*if tokenizeQuoteBlock(state, options) {
 		return true
-	}
+	}*/
 	if tokenizeList(state, options) {
 		return true
 	}
