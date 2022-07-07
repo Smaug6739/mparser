@@ -7,7 +7,6 @@ import (
 	"io"
 	"testing"
 
-	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
@@ -65,9 +64,14 @@ func TestTokenizeAuto(t *testing.T) {
 	test(t, "Line headers 1", "Header\n=", []string{"", "", "===", "==="}, []string{"<h1>", "", "</h1>", ""}, []string{"", "Header", "", "==="})
 	test(t, "Line headers 2", "Header\n---", []string{"", "", "---", "---"}, []string{"<h2>", "", "</h2>", ""}, []string{"", "Header", "", "---"})
 	*/
-	//Indented code
-	test(t, "Indented code 1", "    code", []string{"", "", "    ", "    "}, []string{"<pre>", "<code>", "", "</code>", "</pre>", ""}, []string{"", "", "    code", "", ""})
-	test(t, "Indented code 2", "    code\n    code", []string{"", "", "", "", "", ""}, []string{"<pre>", "<code>", "", "", "</code>", "</pre>"}, []string{"", "", "    code", "    code", "", ""})
+
+	//Indented code classic
+	test2(t, "Indented code 1", "    Code 1", []string{"<pre>", "<code>", "Code 1", "</code>", "</pre>"})
+	test2(t, "Indented code 2", "    Code 1\n    Code 2", []string{"<pre>", "<code>", "Code 1", "Code 2", "</code>", "</pre>"})
+	test2(t, "Indented code 3", "    Code 1\n    Code 2\n    Code 3", []string{"<pre>", "<code>", "Code 1", "Code 2", "Code 3", "</code>", "</pre>"})
+	// Indented code with delimiter
+	test2(t, "Indented code 4", "    - Code 1", []string{"<pre>", "<code>", "- Code 1", "</code>", "</pre>"})
+	test2(t, "Indented code 4", "    - Code 1\n    - Code 2", []string{"<pre>", "<code>", "- Code 1", "- Code 2", "</code>", "</pre>"})
 
 	// Paragraph
 	test(t, "Paragraph 1", "Text", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text", ""})
@@ -111,6 +115,10 @@ func TestTokenizeAuto(t *testing.T) {
 	test2(t, "List lazy continuation lines", "- Item 1\nText (in the item one)", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "</li>", "</ul>"})
 	test2(t, "List lazy continuation lines", "- Item 1\nText (in the item one)\nItem 1", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "Item 1", "</li>", "</ul>"})
 	test2(t, "List lazy continuation lines", "- Item 1\nText (in the item one)\nItem 1\n\nParagraph 1", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "Item 1", "", "</li>", "</ul>", "<p>", "Paragraph 1", "</p>"})
+	// LIST: With other blocks
+	test2(t, "List indented code", "-     Item 1", []string{"<ul>", "<li>", "<pre>", "<code>", "Item 1", "</code>", "</pre>", "</li>", "</ul>"})
+	test2(t, "List indented code", "-     Item 1\n-     Item 2", []string{"<ul>", "<li>", "<pre>", "<code>", "Item 1", "Item 2", "</code>", "</pre>", "</li>", "</ul>"})
+	test2(t, "List indented code", "-     Item 1\n -     Item 2", []string{"<ul>", "<li>", "<pre>", "<code>", "Item 1", " Item 2", "</code>", "</pre>", "</li>", "</ul>"})
 
 	// Quotes (citations)
 	/*	test2(t, "Quote 1 (normal)", "> Citation 1", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "</blockquote>"})
@@ -128,16 +136,13 @@ func TestTokenizeAuto(t *testing.T) {
 }
 
 func TestTokenize(t *testing.T) {
-	/*input := `
-	- Item 1
-
-	  -   Item 2 (TODO: 4 spaces = ERROR)
-	    suite`*/
+	input := `
+-     Item 1
+ -     Item 2
+`
 	/*input := `
 	  `*/ // TODO: Paragraph empty
-	input := "Text\n\nText"
 	tokenized := Tokenize(input)
-	logger.New().Details(tokenized)
 	var last_token preprocessor.Token = tokenized.Tokens[0]
 	HTML := "<div>"
 	for _, v := range tokenized.Tokens {
@@ -150,7 +155,6 @@ func TestTokenize(t *testing.T) {
 		last_token = v
 	}
 	HTML += "</div>"
-	fmt.Println(HTML)
 	r, e := formatXML([]byte(HTML))
 	if e != nil {
 		panic(e)

@@ -15,6 +15,9 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 	if !isUL(data.LineContent) {
 		return false
 	}
+	if countLeadingSpaces(data.LineContent, strings.TrimLeft(data.LineContent, " ")) >= 4 {
+		return false
+	}
 	// #END VERIFICATIONS
 
 	var index int = data.LineIndex           // The index of the current line

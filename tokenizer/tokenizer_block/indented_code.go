@@ -32,7 +32,7 @@ func tokenizeIndentedCode(state *preprocessor.Markdown, options Options) bool {
 	})
 	var lastIndex int
 	for index := data.LineIndex; index <= state.MaxIndex; index++ {
-		content := removeSpaces(state.Lines[index], options.offset)
+		content := removeSpaces(state.GetLine(index), options.offset)
 		if isEmptyLine(content) {
 			break
 		}
@@ -45,7 +45,7 @@ func tokenizeIndentedCode(state *preprocessor.Markdown, options Options) bool {
 		//TODO: Remove four spaces
 		state.Tokens = append(state.Tokens, preprocessor.Token{
 			Token:   "inline_code",
-			Content: content,
+			Content: removeSpaces(content, 4),
 			Line:    index,
 		})
 	}

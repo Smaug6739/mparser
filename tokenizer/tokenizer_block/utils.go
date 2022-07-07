@@ -20,6 +20,9 @@ func isEmptyLine(str string) bool {
 	return len(strings.Trim(str, " ")) == 0
 }
 func removeSpaces(str string, nbToRemove int) string {
+	if len(str) <= nbToRemove {
+		return ""
+	}
 	return str[nbToRemove:]
 }
 
