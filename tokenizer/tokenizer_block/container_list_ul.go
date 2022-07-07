@@ -1,8 +1,10 @@
 package tokenizer_block
 
 import (
+	"fmt"
 	"strings"
 
+	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
@@ -19,7 +21,6 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 		return false
 	}
 	// #END VERIFICATIONS
-
 	var index int = data.LineIndex           // The index of the current line
 	var empty_lines int = 0                  // The number of empty lines
 	var open_ul, open_li bool = false, false // The state of the UL
@@ -29,7 +30,6 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 	var last_leading_spaces int = -1
 	var last_leading_offset int = -1
 	// #END META-DATA
-
 	for index <= options.max_index {
 		line_content := state.GetLine(index)
 		line_leading_spaces := len(line_content) - len(strings.TrimLeft(line_content, " "))
@@ -39,8 +39,13 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 			last_leading_spaces = line_leading_spaces
 			last_leading_offset = countListULOffset(line_content)
 		}
-
+		if line_content == "bim" {
+			fmt.Println(0)
+		}
 		if isEmptyLine(line_content) {
+			if line_content == "bim" {
+				fmt.Println(1)
+			}
 			empty_lines++
 			state.Tokens = append(state.Tokens, preprocessor.Token{
 				Token:  "empty",
@@ -52,20 +57,37 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 			closeLI(state, index-1, &open_ul, &open_li) // -1 because the line the line is from the previous line
 			openLI(state, index, &open_ul, &open_li)
 			TokenizeBlock(state, Options{offset: line_leading_spaces + 2, max_index: state.MaxIndex}, "inline")
-
+			if line_content == "bim" {
+				fmt.Println(2)
+			}
 			// NEW LIST (UL) IN THE LIST
 		} else if isUL(line_content) && line_leading_spaces >= last_leading_spaces+2 && line_leading_spaces >= last_leading_offset && line_leading_spaces-last_leading_offset <= 4 {
 			tokenizeList(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex})
-		} else if line_leading_spaces < last_leading_spaces {
+			if line_content == "bim" {
+				fmt.Println(3)
+			}
+		} else if line_leading_spaces < last_leading_spaces && countOpensBlocks(state, "ul_open", "ul_close") > 1 {
+			if line_content == "bim" {
+				fmt.Println(4)
+			}
 			break // END OF INDENTED LIST
 		} else {
-			var index_before int = len(state.Tokens) - 1
+			if line_content == "bim" {
+				fmt.Println(5)
+			}
+			var slice_index_before int = len(state.Tokens) - 1
 			if TokenizeBlock(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex}, "no_end") || state.GetLastToken().Token == "empty" {
-				insert(&state.Tokens, preprocessor.Token{Token: "li_close", Html: "</li>", Line: index - 1, Closer: true}, index_before+1)
-				insert(&state.Tokens, preprocessor.Token{Token: "ul_close", Html: "</ul>", Line: index - 1, Closer: true}, index_before+2)
+				insert(&state.Tokens, preprocessor.Token{Token: "li_close", Html: "</li>", Line: index - 1, Closer: true}, slice_index_before+1)
+				insert(&state.Tokens, preprocessor.Token{Token: "ul_close", Html: "</ul>", Line: index - 1, Closer: true}, slice_index_before+2)
 				return true
 			} else {
-				TokenizeBlock(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex}, "inline")
+				if state.GetLastToken().Token == "ul_close" {
+					logger.New().Details(state.Tokens)
+					insert(&state.Tokens, preprocessor.Token{Token: "inline", Content: line_content, Line: index}, slice_index_before-1)
+					state.Tokens[state.GetLastTokenSliceIndex()].Line = index
+				} else {
+					TokenizeBlock(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex}, "inline")
+				}
 			}
 		}
 		last_leading_spaces = line_leading_spaces
