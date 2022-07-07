@@ -72,17 +72,46 @@ func TestTokenizeAuto(t *testing.T) {
 	// Paragraph
 	test(t, "Paragraph 1", "Text", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text", ""})
 	test(t, "Paragraph 2", "Text multiple words", []string{"", "", ""}, []string{"<p>", "", "</p>"}, []string{"", "Text multiple words", ""})
+	test2(t, "Paragraph 3", "Line one\n\nLine two", []string{"<p>", "Line one", "</p>", "", "<p>", "Line two", "</p>"})
+	test2(t, "Paragraph 4", "Line one\n\nLine two\nLine three", []string{"<p>", "Line one", "</p>", "", "<p>", "Line two", "Line three", "</p>"})
+	test2(t, "Paragraph 5", "Line one\n\nLine two\nLine three\n\n\nLine four", []string{"<p>", "Line one", "</p>", "", "<p>", "Line two", "Line three", "</p>", "", "", "<p>", "Line four", "</p>"})
 
-	// Lists
-	/*	test2(t, "List 1", "- Item 1", []string{"<ul>", "<li>", "Item 1", "</li>", "</ul>"})
-		test2(t, "List 2 (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
-		test2(t, "List 3 (indented 1)", "- Item 1\n  - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
-		test2(t, "List 4 (indented 2)", "- Item 1\n  - Item 2\n  - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "</ul>"})
-		test2(t, "List 5 (indented 3)", "- Item 1\n  - Item 2\n    - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "<ul>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "</ul>", "</li>", "</ul>"})
-		test2(t, "List 6 (indented 4)", "- Item 1\n  - Item 2\n- Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
-		test2(t, "List 7 (test blank lines 1)", "- Item 1\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
-		test2(t, "List 8 (test blank lines 2)", "- Item 1\n\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
-	*/
+	// LIST: Classic
+	test2(t, "List", "- Item 1", []string{"<ul>", "<li>", "Item 1", "</li>", "</ul>"})
+	test2(t, "List (two items)", "- Item 1\n- Item 2", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	// LIST: Indented
+	test2(t, "List (indented 1)", "- Item 1\n  - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List (indented 2)", "- Item 1\n  - Item 2\n  - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List (indented 3)", "- Item 1\n  - Item 2\n    - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "<ul>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List (indented 4)", "- Item 1\n  - Item 2\n- Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List (indented 5)", "- Item 1\n  - Item 2\n - Item 3", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List (indented 6)", "- Item 1\n  - Item 2\n - Item 3\n\n    - Item 4", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "", "<ul>", "<li>", "Item 4", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List (indented 7)", "- Item 1\n  - Item 2\n - Item 3\n\n    - Item 4\n", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "", "<ul>", "<li>", "Item 4", "", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List (indented 8)", "- Item 1\n  - Item 2\n - Item 3\n\n    - Item 4\n- Item 5", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "", "<ul>", "<li>", "Item 4", "</li>", "</ul>", "</li>", "<li>", "Item 5", "</li>", "</ul>"})
+	// LIST: Start with spaces
+	test2(t, "List  starts with spaces 1", "  - Item 1\n  - Item 2\n- Item 3", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List  starts with spaces 2", "  - Item 1\n- Item 2\n- Item 3", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List  starts with spaces 3", "   - Item 1\n- Item 2\n- Item 3", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List  starts with spaces 4", "   - Item 1\n   - Item 2\n- Item 3", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List  starts with spaces 5", "   - Item 1\n   - Item 2\n   - Item 3", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List  starts with spaces 6", "   - Item 1\n   - Item 2\n    - Item 3", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	// LIST: Empty lines
+	test2(t, "List (test blank lines 1)", "- Item 1\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	test2(t, "List (test blank lines 2)", "- Item 1\n\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	test2(t, "List (test blank lines 3)", "- Item 1\n\n\n\n- Item 2", []string{"<ul>", "<li>", "Item 1", "", "", "", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	test2(t, "List (test blank lines 4)", "- Item 1\n\n\n- Item 2\n- Item 3", []string{"<ul>", "<li>", "Item 1", "", "", "</li>", "<li>", "Item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List (test blank lines with paragraph 1)", "- Item 1\n\n- Item 2\n\nItem 3", []string{"<ul>", "<li>", "Item 1", "", "</li>", "<li>", "Item 2", "", "</li>", "</ul>", "<p>", "Item 3", "</p>"})
+	// LIST: Offset
+	test2(t, "List offset 1", "- Item 1\n - Item 2", []string{"<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	test2(t, "List offset 2", "- Item 1\n  - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List offset 3", "-  Item 1\n   - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List offset 4", "-  Item 1\n    - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List offset 5", "-   Item 1\n     - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
+	// LIST: Lazy continuation line
+	test2(t, "List lazy continuation lines", "- Item 1\nText (in the item one)", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "</li>", "</ul>"})
+	test2(t, "List lazy continuation lines", "- Item 1\nText (in the item one)\nItem 1", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "Item 1", "</li>", "</ul>"})
+	test2(t, "List lazy continuation lines", "- Item 1\nText (in the item one)\nItem 1\n\nParagraph 1", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "Item 1", "", "</li>", "</ul>", "<p>", "Paragraph 1", "</p>"})
+
 	// Quotes (citations)
 	/*	test2(t, "Quote 1 (normal)", "> Citation 1", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "</blockquote>"})
 		test2(t, "Quote 2 (next line 1)", "> Citation 1\nCitation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
@@ -106,10 +135,7 @@ func TestTokenize(t *testing.T) {
 	    suite`*/
 	/*input := `
 	  `*/ // TODO: Paragraph empty
-	input := `
--  Item 2
-  - Item 3
-`
+	input := "Text\n\nText"
 	tokenized := Tokenize(input)
 	logger.New().Details(tokenized)
 	var last_token preprocessor.Token = tokenized.Tokens[0]
@@ -124,6 +150,7 @@ func TestTokenize(t *testing.T) {
 		last_token = v
 	}
 	HTML += "</div>"
+	fmt.Println(HTML)
 	r, e := formatXML([]byte(HTML))
 	if e != nil {
 		panic(e)
