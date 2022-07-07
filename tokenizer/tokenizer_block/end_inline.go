@@ -1,6 +1,8 @@
 package tokenizer_block
 
 import (
+	"strings"
+
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
@@ -16,12 +18,12 @@ func tokenizeInline(state *preprocessor.Markdown, options Options) bool {
 		insert(&state.Tokens, preprocessor.Token{
 			Token:   "inline",
 			Line:    data.LineIndex,
-			Content: data.LineContent,
+			Content: strings.Trim(data.LineContent, " "),
 		}, data.LastTokenSliceIndex)
 	} else {
 		state.Tokens = append(state.Tokens, preprocessor.Token{
 			Token:   "inline",
-			Content: data.LineContent,
+			Content: strings.Trim(data.LineContent, " "),
 			Line:    data.LineIndex,
 			Closer:  true,
 		})

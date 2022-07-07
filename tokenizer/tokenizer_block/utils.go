@@ -53,3 +53,15 @@ func removeFirstCharOfString(str string) string {
 func removePrefix(str string, nb int) string {
 	return str[nb:]
 }
+func countOpensBlocks(state *preprocessor.Markdown, open, close string) int {
+	var open_blocks int = 0
+	var close_blocks int = 0
+	for _, token := range state.Tokens {
+		if token.Token == open {
+			open_blocks++
+		} else if token.Token == close {
+			close_blocks++
+		}
+	}
+	return open_blocks - close_blocks
+}
