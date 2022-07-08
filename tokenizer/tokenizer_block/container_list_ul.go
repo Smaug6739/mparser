@@ -49,11 +49,11 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 			closeLI(state, index-1, &open_ul, &open_li) // -1 because the line the line is from the previous line
 			openLI(state, index, &open_ul, &open_li)
 			TokenizeBlock(state, Options{offset: line_leading_spaces + 2, max_index: state.MaxIndex}, "inline")
-			
+
 			// NEW LIST (UL) IN THE LIST
 		} else if isUL(line_content) && line_leading_spaces >= max_leading_spaces+2 && line_leading_spaces >= max_leading_offset && line_leading_spaces-max_leading_offset <= 4 {
 			tokenizeList(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex})
-			
+
 		} else if line_leading_spaces < max_leading_spaces {
 			if isUL(line_content) {
 				break // END OF INDENTED LIST
@@ -67,14 +67,14 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 				insert(&state.Tokens, preprocessor.Token{Token: "ul_close", Html: "</ul>", Line: index - 1, Closer: true}, slice_index_before+2)
 				return true
 			} else {
-					TokenizeBlock(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex}, "inline")
+				TokenizeBlock(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex}, "inline")
 			}
 		}
 		if line_leading_spaces > max_leading_spaces {
-		max_leading_spaces = line_leading_spaces
+			max_leading_spaces = line_leading_spaces
 		}
 		if countListULOffset(line_content) > max_leading_offset {
-		max_leading_offset = countListULOffset(line_content)
+			max_leading_offset = countListULOffset(line_content)
 		}
 		index = state.GetLastToken().Line + 1
 	}
