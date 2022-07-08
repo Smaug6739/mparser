@@ -116,7 +116,7 @@ func TestTokenizeAuto(t *testing.T) {
 	test2(t, "List lazy continuation lines 1", "- Item 1\nText (in the item one)", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "</li>", "</ul>"})
 	test2(t, "List lazy continuation lines 2", "- Item 1\nText (in the item one)\nItem 1", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "Item 1", "</li>", "</ul>"})
 	test2(t, "List lazy continuation lines 3", "- Item 1\nText (in the item one)\nItem 1\n\nParagraph 1", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "Item 1", "", "</li>", "</ul>", "<p>", "Paragraph 1", "</p>"})
-	//(t, "List lazy continuation lines 4", "- Item 1\n  - Item 2\nItem 1\n\nParagraph 1", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "Item 1", "", "</li>", "</ul>", "<p>", "Paragraph 1", "</p>"})
+	test2(t, "List lazy continuation lines 4", "- Item 1\n  - Item 2\nfoo\nbar", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "foo", "bar", "</li>", "</ul>", "</li>", "</ul>"})
 	// LIST: With other blocks
 	test2(t, "List indented code", "-     Item 1", []string{"<ul>", "<li>", "<pre>", "<code>", "Item 1", "</code>", "</pre>", "</li>", "</ul>"})
 	test2(t, "List indented code", "-     Item 1\n-     Item 2", []string{"<ul>", "<li>", "<pre>", "<code>", "Item 1", "Item 2", "</code>", "</pre>", "</li>", "</ul>"})
@@ -138,10 +138,13 @@ func TestTokenizeAuto(t *testing.T) {
 }
 
 func TestTokenize(t *testing.T) {
-	input := `- foo
+	input := `
+- foo
   - bar
     - baz
-bim
+baaz
+beer
+  - bim
 `
 	/*input := `
 	  `*/ // TODO: Paragraph empty

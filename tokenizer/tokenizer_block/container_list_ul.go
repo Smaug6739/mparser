@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Smaug6739/mparser/internal/logger"
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
@@ -27,23 +26,22 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 
 	// META-DATA:
 	var normal_leading_spaces int = 0 // The minimum number of leading spaces
-	var last_leading_spaces int = -1
-	var last_leading_offset int = -1
+	var max_leading_spaces int = -1
+	var max_leading_offset int = -1
 	// #END META-DATA
 	for index <= options.max_index {
 		line_content := state.GetLine(index)
 		line_leading_spaces := len(line_content) - len(strings.TrimLeft(line_content, " "))
-
-		if last_leading_spaces == -1 && last_leading_offset == -1 {
+		if max_leading_spaces == -1 && max_leading_offset == -1 {
 			normal_leading_spaces = line_leading_spaces
-			last_leading_spaces = line_leading_spaces
-			last_leading_offset = countListULOffset(line_content)
+			max_leading_spaces = line_leading_spaces
+			max_leading_offset = countListULOffset(line_content)
 		}
-		if line_content == "bim" {
+		if line_content == "  - bim" {
 			fmt.Println(0)
 		}
 		if isEmptyLine(line_content) {
-			if line_content == "bim" {
+			if line_content == "  - bim" {
 				fmt.Println(1)
 			}
 			empty_lines++
@@ -54,25 +52,31 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 			})
 			// NEW ITEM (LI) IN THE LIST
 		} else if isUL(line_content) && (normal_leading_spaces == line_leading_spaces || normal_leading_spaces == line_leading_spaces-1 || (line_leading_spaces < normal_leading_spaces && countOpensBlocks(state, "ul_open", "ul_close") == 1)) {
+			if line_content == "  - bim" {
+				fmt.Println(2)
+			}
 			closeLI(state, index-1, &open_ul, &open_li) // -1 because the line the line is from the previous line
 			openLI(state, index, &open_ul, &open_li)
 			TokenizeBlock(state, Options{offset: line_leading_spaces + 2, max_index: state.MaxIndex}, "inline")
-			if line_content == "bim" {
-				fmt.Println(2)
-			}
+			
 			// NEW LIST (UL) IN THE LIST
-		} else if isUL(line_content) && line_leading_spaces >= last_leading_spaces+2 && line_leading_spaces >= last_leading_offset && line_leading_spaces-last_leading_offset <= 4 {
-			tokenizeList(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex})
-			if line_content == "bim" {
+		} else if isUL(line_content) && line_leading_spaces >= max_leading_spaces+2 && line_leading_spaces >= max_leading_offset && line_leading_spaces-max_leading_offset <= 4 {
+			if line_content == "  - bim" {
 				fmt.Println(3)
 			}
-		} else if line_leading_spaces < last_leading_spaces && countOpensBlocks(state, "ul_open", "ul_close") > 1 {
-			if line_content == "bim" {
+			tokenizeList(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex})
+			
+		} else if line_leading_spaces < max_leading_spaces {
+			if line_content == "  - bim" {
 				fmt.Println(4)
 			}
-			break // END OF INDENTED LIST
+			if isUL(line_content) {
+				break // END OF INDENTED LIST
+			} else {
+									TokenizeBlock(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex}, "inline")
+			}
 		} else {
-			if line_content == "bim" {
+			if line_content == "  - bim" {
 				fmt.Println(5)
 			}
 			var slice_index_before int = len(state.Tokens) - 1
@@ -81,17 +85,15 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 				insert(&state.Tokens, preprocessor.Token{Token: "ul_close", Html: "</ul>", Line: index - 1, Closer: true}, slice_index_before+2)
 				return true
 			} else {
-				if state.GetLastToken().Token == "ul_close" {
-					logger.New().Details(state.Tokens)
-					insert(&state.Tokens, preprocessor.Token{Token: "inline", Content: line_content, Line: index}, slice_index_before-1)
-					state.Tokens[state.GetLastTokenSliceIndex()].Line = index
-				} else {
 					TokenizeBlock(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex}, "inline")
-				}
 			}
 		}
-		last_leading_spaces = line_leading_spaces
-		last_leading_offset = countListULOffset(line_content)
+		if line_leading_spaces > max_leading_spaces {
+		max_leading_spaces = line_leading_spaces
+		}
+		if countListULOffset(line_content) > max_leading_offset {
+		max_leading_offset = countListULOffset(line_content)
+		}
 		index = state.GetLastToken().Line + 1
 	}
 	closeLI(state, index-1, &open_ul, &open_li)
