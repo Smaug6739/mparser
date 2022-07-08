@@ -114,6 +114,9 @@ func TestTokenizeAuto(t *testing.T) {
 	test2(t, "List offset 3", "-  Item 1\n   - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
 	test2(t, "List offset 4", "-  Item 1\n    - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
 	test2(t, "List offset 5", "-   Item 1\n     - Item 2", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List offset 6", "-   Item 1\n     - Item 2\n   - Item three", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item three", "</li>", "</ul>"})
+	test2(t, "List offset 7", "-   Item 1\n    - Item 2\n   - Item three", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item three", "</li>", "</ul>"})
+	test2(t, "List offset 8", "-   Item 1\n     - Item 2\n- Item three", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item three", "</li>", "</ul>"})
 	// LIST: Lazy continuation line
 	test2(t, "List lazy continuation lines 1", "- Item 1\nText (in the item one)", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "</li>", "</ul>"})
 	test2(t, "List lazy continuation lines 2", "- Item 1\nText (in the item one)\nItem 1", []string{"<ul>", "<li>", "Item 1", "Text (in the item one)", "Item 1", "</li>", "</ul>"})
@@ -145,10 +148,9 @@ func TestTokenizeAuto(t *testing.T) {
 }
 
 func TestTokenize(t *testing.T) {
-	input := `
-> - Item 1
-- Item 2
-`
+	input := `-   Item 1
+     - Item 2
+  - Item three`
 	/*input := `
 	  `*/ // TODO: Paragraph empty
 	tokenized := Tokenize(input)
