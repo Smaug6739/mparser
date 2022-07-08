@@ -130,26 +130,24 @@ func TestTokenizeAuto(t *testing.T) {
 	test2(t, "List indented code", "-     Item 1\n -     Item 2", []string{"<ul>", "<li>", "<pre>", "<code>", "Item 1", " Item 2", "</code>", "</pre>", "</li>", "</ul>"})
 
 	// Quotes (citations)
-	/*	test2(t, "Quote 1 (normal)", "> Citation 1", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "</blockquote>"})
-		test2(t, "Quote 2 (next line 1)", "> Citation 1\nCitation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
-		test2(t, "Quote 3 (next line 2)", "> Citation 1\n> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
-		test2(t, "Quote 4 (other block 1)", "> Citation 1\n>> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<p>", "Citation 2", "</p>", "</blockquote>", "</blockquote>"})
-		test2(t, "Quote 4 (other block 2)", "> Citation 1\n>>> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-		test2(t, "Quote 5 (other block 3)", "> Citation 1\n>>> Citation 2\nCitation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-		test2(t, "Quote 6 (other block 4)", "> Citation 1\n>>> Citation 2\n> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-		test2(t, "Quote 7 (other block 5)", "> Citation 1\n>>> Citation 2\n>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-		test2(t, "Quote 8 (other block 6)", "> Citation 1\n>>> Citation 2\n>>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-		test2(t, "Quote 9 (other block 7)", "> Citation 1\n>>> Citation 2\n> > Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-		test2(t, "Quote 10 (other block 8)", "> Citation 1\n>>> Citation 2\n>>> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
-	*/
+	test2(t, "Quote 1 (normal)", "> Citation 1", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "</blockquote>"})
+	test2(t, "Quote 2 (next line 1)", "> Citation 1\nCitation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
+	test2(t, "Quote 3 (next line 2)", "> Citation 1\n> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "Citation 2", "</p>", "</blockquote>"})
+	test2(t, "Quote 4 (other block 1)", "> Citation 1\n>> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<p>", "Citation 2", "</p>", "</blockquote>", "</blockquote>"})
+	test2(t, "Quote 4 (other block 2)", "> Citation 1\n>>> Citation 2", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+	test2(t, "Quote 5 (other block 3)", "> Citation 1\n>>> Citation 2\nCitation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+	test2(t, "Quote 6 (other block 4)", "> Citation 1\n>>> Citation 2\n> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+	test2(t, "Quote 7 (other block 5)", "> Citation 1\n>>> Citation 2\n>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+	test2(t, "Quote 8 (other block 6)", "> Citation 1\n>>> Citation 2\n>>Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+	test2(t, "Quote 9 (other block 7)", "> Citation 1\n>>> Citation 2\n> > Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+	test2(t, "Quote 10 (other block 8)", "> Citation 1\n>>> Citation 2\n>>> Citation 3", []string{"<blockquote>", "<p>", "Citation 1", "</p>", "<blockquote>", "<blockquote>", "<p>", "Citation 2", "Citation 3", "</p>", "</blockquote>", "</blockquote>", "</blockquote>"})
+
 }
 
 func TestTokenize(t *testing.T) {
 	input := `
-- Item 1
-  - Item 2 (indented)
-Item 2 (lazy continuation)
-  - Item three (indented)
+> - Item 1
+- Item 2
 `
 	/*input := `
 	  `*/ // TODO: Paragraph empty
@@ -167,6 +165,7 @@ Item 2 (lazy continuation)
 	}
 	HTML += "</div>"
 	logger.New().Details(tokenized)
+	logger.New().Details(HTML)
 	r, e := formatXML([]byte(HTML))
 	if e != nil {
 		panic(e)
