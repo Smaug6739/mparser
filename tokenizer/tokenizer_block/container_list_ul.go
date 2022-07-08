@@ -1,7 +1,6 @@
 package tokenizer_block
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/Smaug6739/mparser/preprocessor"
@@ -37,13 +36,8 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 			max_leading_spaces = line_leading_spaces
 			max_leading_offset = countListULOffset(line_content)
 		}
-		if line_content == "  - bim" {
-			fmt.Println(0)
-		}
+
 		if isEmptyLine(line_content) {
-			if line_content == "  - bim" {
-				fmt.Println(1)
-			}
 			empty_lines++
 			state.Tokens = append(state.Tokens, preprocessor.Token{
 				Token:  "empty",
@@ -52,33 +46,21 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 			})
 			// NEW ITEM (LI) IN THE LIST
 		} else if isUL(line_content) && (normal_leading_spaces == line_leading_spaces || normal_leading_spaces == line_leading_spaces-1 || (line_leading_spaces < normal_leading_spaces && countOpensBlocks(state, "ul_open", "ul_close") == 1)) {
-			if line_content == "  - bim" {
-				fmt.Println(2)
-			}
 			closeLI(state, index-1, &open_ul, &open_li) // -1 because the line the line is from the previous line
 			openLI(state, index, &open_ul, &open_li)
 			TokenizeBlock(state, Options{offset: line_leading_spaces + 2, max_index: state.MaxIndex}, "inline")
 			
 			// NEW LIST (UL) IN THE LIST
 		} else if isUL(line_content) && line_leading_spaces >= max_leading_spaces+2 && line_leading_spaces >= max_leading_offset && line_leading_spaces-max_leading_offset <= 4 {
-			if line_content == "  - bim" {
-				fmt.Println(3)
-			}
 			tokenizeList(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex})
 			
 		} else if line_leading_spaces < max_leading_spaces {
-			if line_content == "  - bim" {
-				fmt.Println(4)
-			}
 			if isUL(line_content) {
 				break // END OF INDENTED LIST
 			} else {
-									TokenizeBlock(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex}, "inline")
+				TokenizeBlock(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex}, "inline")
 			}
 		} else {
-			if line_content == "  - bim" {
-				fmt.Println(5)
-			}
 			var slice_index_before int = len(state.Tokens) - 1
 			if TokenizeBlock(state, Options{offset: line_leading_spaces, max_index: state.MaxIndex}, "no_end") || state.GetLastToken().Token == "empty" {
 				insert(&state.Tokens, preprocessor.Token{Token: "li_close", Html: "</li>", Line: index - 1, Closer: true}, slice_index_before+1)
