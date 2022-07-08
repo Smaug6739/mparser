@@ -70,6 +70,8 @@ func TestTokenizeAuto(t *testing.T) {
 	test2(t, "Indented code 1", "    Code 1", []string{"<pre>", "<code>", "Code 1", "</code>", "</pre>"})
 	test2(t, "Indented code 2", "    Code 1\n    Code 2", []string{"<pre>", "<code>", "Code 1", "Code 2", "</code>", "</pre>"})
 	test2(t, "Indented code 3", "    Code 1\n    Code 2\n    Code 3", []string{"<pre>", "<code>", "Code 1", "Code 2", "Code 3", "</code>", "</pre>"})
+	test2(t, "Indented code 4", "    Code 1\n    Code 2\n      Code 3", []string{"<pre>", "<code>", "Code 1", "Code 2", "  Code 3", "</code>", "</pre>"})
+	test2(t, "Indented code 5", "    Code 1\n    Code 2\n   Code 3", []string{"<pre>", "<code>", "Code 1", "Code 2", "</code>", "</pre>", "<p>", "Code 3", "</p>"})
 	// Indented code with delimiter
 	test2(t, "Indented code 4", "    - Code 1", []string{"<pre>", "<code>", "- Code 1", "</code>", "</pre>"})
 	test2(t, "Indented code 4", "    - Code 1\n    - Code 2", []string{"<pre>", "<code>", "- Code 1", "- Code 2", "</code>", "</pre>"})
