@@ -127,6 +127,18 @@ func TestTokenizeAuto(t *testing.T) {
 	test2(t, "List lazy lines + item 1", "- Item 1\n  - Item 2 (indented)\nLazy continuation item 2\n  - Item 3\nItem 3 lazy", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2 (indented)", "Lazy continuation item 2", "</li>", "<li>", "Item 3", "Item 3 lazy", "</li>", "</ul>", "</li>", "</ul>"})
 	test2(t, "List lazy lines + item 1", "- Item 1\n  - Item 2 (indented)\nLazy continuation item 2\n  - Item 3\n- Item 4", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2 (indented)", "Lazy continuation item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "<li>", "Item 4", "</li>", "</ul>"})
 	test2(t, "List lazy lines + item 1", "- Item 1\n  - Item 2 (indented)\nLazy continuation item 2\n  - Item 3\n- Item 4\nItem 4 lazy", []string{"<ul>", "<li>", "Item 1", "<ul>", "<li>", "Item 2 (indented)", "Lazy continuation item 2", "</li>", "<li>", "Item 3", "</li>", "</ul>", "</li>", "<li>", "Item 4", "Item 4 lazy", "</li>", "</ul>"})
+	// LIST: With multiple prefixes
+	test2(t, "List multiple prefixes 1", "- - Item 1", []string{"<ul>", "<li>", "<ul>", "<li>", "Item 1", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List multiple prefixes 2", "- - Item 1\nlazy continuation", []string{"<ul>", "<li>", "<ul>", "<li>", "Item 1", "lazy continuation", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List multiple prefixes 3", "- - Item 1\n- Item 2", []string{"<ul>", "<li>", "<ul>", "<li>", "Item 1", "</li>", "</ul>", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	test2(t, "List multiple prefixes 4", "- - Item 1\n - Item 2", []string{"<ul>", "<li>", "<ul>", "<li>", "Item 1", "</li>", "</ul>", "</li>", "<li>", "Item 2", "</li>", "</ul>"})
+	test2(t, "List multiple prefixes 5", "- - Item 1\n  - Item 2", []string{"<ul>", "<li>", "<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List multiple prefixes 6", "- - Item 1\n  - Item 2\n- Item 3", []string{"<ul>", "<li>", "<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List multiple prefixes 7", "- - Item 1\n  - Item 2\n - Item 3", []string{"<ul>", "<li>", "<ul>", "<li>", "Item 1", "</li>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "<li>", "Item 3", "</li>", "</ul>"})
+	test2(t, "List multiple prefixes 8", "- - Item 1\n-  - Item 2", []string{"<ul>", "<li>", "<ul>", "<li>", "Item 1", "</li>", "</ul>", "</li>", "<li>", "<ul>", "<li>", "Item 2", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List multiple prefixes 9", "- - - Item 1", []string{"<ul>", "<li>", "<ul>", "<li>", "<ul>", "<li>", "Item 1", "</li>", "</ul>", "</li>", "</ul>", "</li>", "</ul>"})
+	test2(t, "List multiple prefixes 10", "- - - - Item 1", []string{"<ul>", "<li>", "<ul>", "<li>", "<ul>", "<li>", "<ul>", "<li>", "Item 1", "</li>", "</ul>", "</li>", "</ul>", "</li>", "</ul>", "</li>", "</ul>"})
+
 	// LIST: With other blocks
 	test2(t, "List indented code", "-     Item 1", []string{"<ul>", "<li>", "<pre>", "<code>", "Item 1", "</code>", "</pre>", "</li>", "</ul>"})
 	test2(t, "List indented code", "-     Item 1\n-     Item 2", []string{"<ul>", "<li>", "<pre>", "<code>", "Item 1", "Item 2", "</code>", "</pre>", "</li>", "</ul>"})
@@ -148,9 +160,7 @@ func TestTokenizeAuto(t *testing.T) {
 }
 
 func TestTokenize(t *testing.T) {
-	input := `- - Item 1
-  - Item 2
-- Item 3`
+	input := `- - - Item 1`
 	/*input := `
 	  `*/ // TODO: Paragraph empty
 	tokenized := Tokenize(input)
