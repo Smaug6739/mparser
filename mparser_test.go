@@ -148,9 +148,9 @@ func TestTokenizeAuto(t *testing.T) {
 }
 
 func TestTokenize(t *testing.T) {
-	input := `-   Item 1
-     - Item 2
-  - Item three`
+	input := `- - Item 1
+  - Item 2
+- Item 3`
 	/*input := `
 	  `*/ // TODO: Paragraph empty
 	tokenized := Tokenize(input)

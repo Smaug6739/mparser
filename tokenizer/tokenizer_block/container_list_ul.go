@@ -46,6 +46,20 @@ func tokenizeList(state *preprocessor.Markdown, options Options) bool {
 			})
 			// NEW ITEM (LI) IN THE LIST
 		} else if isUL(line_content) && (normal_leading_spaces == line_leading_spaces || normal_leading_spaces == line_leading_spaces-1 || (line_leading_spaces < max_leading_offset && countOpensBlocks(state, "ul_open", "ul_close") == 1)) {
+			/* REMOVE THE PREFIX (REPLACE WITH SPACE) */
+			/* TODO: Export it as a function */
+			new_content := ""
+			delimiter_len := 0
+			for _, c := range line_content {
+				if c == '-' && delimiter_len == 0 {
+					delimiter_len++
+					new_content += " "
+				} else {
+					new_content += string(c)
+				}
+			}
+			state.Lines[index] = new_content
+			/* #END REMOVE THE PREFIX */
 			closeLI(state, index-1, &open_ul, &open_li) // -1 because the line the line is from the previous line
 			openLI(state, index, &open_ul, &open_li)
 			TokenizeBlock(state, Options{offset: line_leading_spaces + 2, max_index: state.MaxIndex}, "inline")
