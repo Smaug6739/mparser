@@ -8,6 +8,22 @@ import (
 	"github.com/Smaug6739/mparser/preprocessor"
 )
 
+func handleBlankLine(state *preprocessor.Markdown, options Options) bool {
+	data, ok := state.GetData(options.offset)
+	if !ok {
+		return false
+	}
+	if state.Meta.Blank_lines_allowed != true && data.LineContent == "" {
+		state.Tokens = append(state.Tokens, preprocessor.Token{
+			Token:  "internal_blank_line",
+			Line:   data.LineIndex,
+			Closer: true,
+		})
+		return true
+	}
+	return false
+}
+
 // Param one: the string
 // Param two: the left-trimmed string (strings.Trim(str, " "))
 func countLeadingSpaces(str1, trimmedStr string) int {

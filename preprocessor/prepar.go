@@ -18,6 +18,9 @@ func prepar(str string) *Markdown {
 				Closer: true,
 			},
 		},
+		Meta: MetaMarkdown{
+			Blank_lines_allowed: true,
+		},
 	}
 	return &instance
 }

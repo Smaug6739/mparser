@@ -160,7 +160,8 @@ func TestTokenizeAuto(t *testing.T) {
 }
 
 func TestTokenize(t *testing.T) {
-	input := `- - - Item 1`
+	input := `> - Citation 1
+new line`
 	/*input := `
 	  `*/ // TODO: Paragraph empty
 	tokenized := Tokenize(input)

@@ -20,13 +20,16 @@ type Options struct {
 }
 
 func TokenizeBlock(state *preprocessor.Markdown, options Options, end string) bool {
+	if handleBlankLine(state, options) {
+		return true
+	}
 	if tokenizeEmpty(state, options) {
 		return true
 	}
-	if tokenizeQuoteBlock(state, options) {
+	if tokenizeList(state, options) {
 		return true
 	}
-	if tokenizeList(state, options) {
+	if tokenizeQuoteBlock(state, options) {
 		return true
 	}
 	if tokenizeIndentedCode(state, options) {

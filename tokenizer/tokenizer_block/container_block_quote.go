@@ -21,9 +21,7 @@ func tokenizeQuoteBlock(state *preprocessor.Markdown, options Options) bool {
 	for index <= state.MaxIndex {
 		content := state.Lines[index]
 		is_quote := isQuote(strings.TrimLeft(content, " "))
-		if isEmptyLine(content) {
-			break
-		} else if is_quote {
+		if is_quote {
 			max_delimiters := countDelimiters(content)
 			if !inQuoteblock(&state.Tokens) {
 				for i := index + 1; i <= state.MaxIndex && isQuote(state.Lines[i]); i++ {

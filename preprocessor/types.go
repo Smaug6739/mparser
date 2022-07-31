@@ -5,6 +5,7 @@ type Markdown struct {
 	Lines    []string // The source splited on character "\n"
 	MaxIndex int      // Maximal index
 	Tokens   Tokens   // Tokens (see: Token)
+	Meta     MetaMarkdown
 }
 
 type Tokens = []Token
@@ -23,4 +24,7 @@ type Meta struct {
 	leading_spaces int
 	offset         int
 	level          int
+}
+type MetaMarkdown struct {
+	Blank_lines_allowed bool
 }
